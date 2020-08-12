@@ -2,12 +2,14 @@
     "identifier": "nz.eiara.HCL",
     "name": "HCL",
     "vendor": "Eiara Limited",
-    "description": "Adds support for Hashicorp's HCL2, specifically for Terraform >= 0.12 and Packer >= 0.1.5",
+    "description": "Language support for Hashicorp's Terraform and Packer",
     "version": "0.1.0",
     "categories": ["languages"],
     "keywords": ["terraform", "packer"],
     "license": "MIT",
-    "bugs": "https://github.com/Eiara/HCL.novaextension/issues",
-    "repository": "https://github.com/Eiara/HCL.novaextension/",
-    
+    "bugs": {
+        "url": "https://github.com/Eiara/HCL.novaextension/issues"
+    },
+    "repository": "https://github.com/Eiara/HCL.novaextension",
+    "homepage": "https://github.com/Eiara/HCL.novaextension"
 }
