@@ -1,0 +1,9 @@
+{
+    "identifier": "nz.eiara.HCL",
+    "name": "HCL",
+    "vendor": "Eiara Limited",
+    "description": "Adds support for Hashicorp's HCL2, specifically for Terraform >= 0.12 and Packer >= 0.1.5",
+    "version": "1.0",
+    "categories": ["languages"],
+    "keywords": ["terraform", "packer"]
+}

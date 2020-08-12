@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="hcl">
+    <meta>
+        <name>HCL</name>
+        <type>structured</type>
+    </meta>
+    
+    <!-- What does this even do? -->
+    <symbols redefinition="within-construct">
+        <local scope="within-construct" />
+    </symbols>
+    
+    <collections>
+        <collection name="comments">
+            <scope name="hcl.comment.single" spell-check="true">
+                <expression>\#.*$</expression>
+            </scope>
+            <scope name="hcl.comment.block" spell-check="true">
+                
+                <starts-with>
+                    <expression>\/\*</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>\*\/</expression>
+                </ends-with>
+            </scope>
+        </collection>
+        <collection name="syntax">
+            <scope name="hcl.bracket.curly.open">
+                <symbol type="block">
+                    <context behavior="start" group="curly-brackets" />
+                </symbol>
+                <expression>\{</expression>
+            </scope>
+            <scope name="hcl.bracket.curly.close">
+                <symbol type="block">
+                    <context behavior="end" group="curly-brackets" />
+                </symbol>
+                <expression>\}</expression>
+            </scope>
+        </collection>
+        <!-- How to parse strings -->
+        <!-- Also includes parsing HEREDOCs, and mapping in appropriate parsers for HEREDOC strings -->
+        <collection name="strings">
+            <scope name="hcl.string.double-quoted">
+                <starts-with>
+                    <expression>&quot;</expression>
+                </starts-with>
+                <ends-with>
+                    <expression>&quot;</expression>
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="interpolations" />
+                </subscopes>
+            </scope>
+        </collection>
+        <collection name="numbers">
+            <scope name="hcl.value.number">
+                <expression>
+                    (?x:            # turn on extended mode
+                        \b          # Be either the beginning of the line, require whitespace
+			             -?         # an optional minus
+			             (?:
+			               0        # a zero
+			               |        # ...or...
+			               [1-9]    # a 1-9 character
+			               \d*      # followed by zero or more digits
+			             )
+			             (?:
+			               (?:
+			                 \.     # a period
+			                 \d+    # followed by one or more digits
+			               )?
+			             )?         # make decimal portion optional
+                   (
+                     [kKmMgG]b? # Do we have a trailing suffix?
+                   )?         # 
+                   \b
+			           )
+                </expression>
+            </scope>
+        </collection>
+        <!-- Core assignable values -->
+        <collection name="values">
+            <scope name="hcl.value.null">
+                <strings>
+                    <string>null</string>
+                </strings>
+            </scope>
+            <scope name="hcl.value.boolean">
+                <strings>
+                    <string>true</string>
+                    <string>false</string>
+                </strings>
+            </scope>
+        </collection>
+        <!-- generic block types - variables and locals -->
+        <collection name="blocks">
+        <!-- top-level variable and output blocks -->
+            <scope name="hcl.block.core">
+                <symbol type="block">
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(variable|locals)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.identifier.argument.name" />
+                    <capture number="3" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+            </scope>
+            <scope name="hcl.block.resource.definition">
+                <symbol type="block">"                    
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>([a-z][a-zA-Z0-9\-_]+)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.identifier.type" />
+                    <capture number="3" name="hcl.identifier.argument.name" />
+                    <capture number="4" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
+                    <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="inner-blocks" />
+                </subscopes>
+            </scope>
+        </collection>
+        <collection name="functions">
+        <!-- Globally-available function names -->
+        <!-- Not used at present, here for future use -->
+            <scope name="hcl.identifier.core.function">
+                <strings  suffix="(?=\()">
+                    <string>abs</string>
+                    <string>abspath</string>
+                    <string>base64decode</string>
+                    <string>base64encode</string>
+                    <string>basename</string>
+                    <string>bcrypt</string>
+                    <string>can</string>
+                    <string>ceil</string>
+                    <string>chomp</string>
+                    <string>chunklist</string>
+                    <string>cidrhost</string>
+                    <string>cidrnetmask</string>
+                    <string>cidrsubnet</string>
+                    <string>coalesce</string>
+                    <string>coalescelist</string>
+                    <string>compact</string>
+                    <string>concat</string>
+                    <string>contains</string>
+                    <string>csvdecode</string>
+                    <string>dirname</string>
+                    <string>distinct</string>
+                    <string>element</string>
+                    <string>file</string>
+                    <string>fileexists</string>
+                    <string>fileset</string>
+                    <string>flatten</string>
+                    <string>floor</string>
+                    <string>format</string>
+                    <string>formatdate</string>
+                    <string>formatlist</string>
+                    <string>indent</string>
+                    <string>join</string>
+                    <string>jsondecode</string>
+                    <string>jsonencode</string>
+                    <string>keys</string>
+                    <string>length</string>
+                    <string>log</string>
+                    <string>lookup</string>
+                    <string>lower</string>
+                    <string>max</string>
+                    <string>md5</string>
+                    <string>merge</string>
+                    <string>min</string>
+                    <string>parseint</string>
+                    <string>pathexpand</string>
+                    <string>pow</string>
+                    <string>range</string>
+                    <string>replace</string>
+                    <string>reverse</string>
+                    <string>rsadecrypt</string>
+                    <string>setintersection</string>
+                    <string>setproduct</string>
+                    <string>setunion</string>
+                    <string>sha1</string>
+                    <string>sha256</string>
+                    <string>signum</string>
+                    <string>slice</string>
+                    <string>sort</string>
+                    <string>split</string>
+                    <string>strrev</string>
+                    <string>substr</string>
+                    <string>timeadd</string>
+                    <string>timestamp</string>
+                    <string>title</string>
+                    <string>trim</string>
+                    <string>trimprefix</string>
+                    <string>trimsuffix</string>
+                    <string>try</string>
+                    <string>upper</string>
+                    <string>urlencode</string>
+                    <string>uuidv5</string>
+                    <string>values</string>
+                    <string>yamldecode</string>
+                    <string>yamlencode</string>
+                    <string>zipmap</string>
+                </strings>
+            </scope>
+            <scope name="hcl.identifier.function.call">
+                <starts-with>
+                    <expression>([a-zA-Z0-9]+)(\()</expression>
+                    <capture number="1" name="hcl.identifier.core.function" />
+                    <capture number="2" name="hcl.bracket.parenthesis.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\))</expression>
+                    <capture number="1" name="hcl.bracket.parenthesis.close" />
+                </ends-with>
+                <subscopes>
+                    <scope name="hcl.separator">
+                        <expression>,</expression>
+                    </scope>
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="types" />
+                    <include syntax="self" collection="objects" />
+                </subscopes>
+            </scope>
+        </collection>
+        <!-- Inside of blocks, the foo = ... structure -->
+        <collection name="assignments">
+            <scope name="hcl.property.assignment">
+                <starts-with>
+                    <expression>(?:\s*)([a-zA-Z0-9\_\-]+)\s*(\=)\s*</expression>
+                    <capture number="1" name="hcl.identifier.property" />
+                    <capture number="2" name="hcl.operator" />
+                </starts-with>
+                <ends-with>
+                    <!--
+                        End the assignment at EOL 
+                        TODO: there may be a better way of doing this?
+                    -->
+                    <expression>$</expression>
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
+                    <include syntax="self" collection="types" />
+                    <include syntax="self" collection="functions" />
+                    <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="heredoc" />
+                </subscopes>
+            </scope>
+        </collection>
+        <!-- the if/for/foreach stuff features in HCL2 -->
+        <collection name="control-flow">
+        
+        </collection>
+        
+        <!-- For handling for in-string variable interpolation -->
+        <collection name="interpolations">
+            <scope name="hcl.interpolation">
+                <starts-with>
+                    <expression>\$[\$]{0,1}\{</expression>
+                    <capture number="0" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>\}</expression>
+                    <capture number="0" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <!-- recursively includes interpolations -->
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="types" />
+                </subscopes>
+            </scope>
+        </collection>
+        <!-- Handles arrays, maps, and normal dotted expressions -->
+        <collection name="types">
+            <!-- 
+                Dotted expressions.
+                Specifically creating expressions for the various major types
+                to capture that var. and local. are special
+            -->
+            <scope name="hcl.reference.variable">
+                <starts-with>
+                    <expression>
+                        (?x:                                # turn on extended mode, allows arbitrary whitespace
+                            (var|local)(\.)                 # First match is always a variable or local declaration
+                            ([a-zA-Z][a-zA-Z\-_0-9]+)       # variable names always start with a letter
+                        )
+                    </expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.operator" />
+                    <capture number="3" name="hcl.identifier.property" />
+                    <capture number="4" name="hcl.operator" />
+                    <capture number="5" name="hcl.identifer.property" />
+                </starts-with>
+                <ends-with>
+                    <expression>
+                        <!--
+                            End parsing if we're inside of an interpolation
+                            or
+                            we hit some whitespace
+                            Fortunately putting whitespace into the [] pair, if we match it,
+                            doesn't match this, which is great!
+                        -->
+                        (?=[\}\s\]])
+                    </expression>
+                </ends-with>
+                <subscopes>
+                    <scope name="hcl.reference.lookup">
+                        <starts-with>
+                            <expression>\[</expression>
+                            <capture number="0" name="hcl.bracket.square.open"/>
+                        </starts-with>
+                        <ends-with>
+                            <expression>\]</expression>
+                            <capture number="0" name="hcl.bracket.square.close"/>
+                        </ends-with>
+                        <subscopes>
+                            <!--
+                                This will only ever be a string, number, or a deeper
+                                reference
+                            -->
+                            <include syntax="self" collection="numbers" />
+                            <include syntax="self" collection="strings" />
+                            <include syntax="self" collection="types" />
+                        </subscopes>
+                    </scope>
+                    <scope name="hcl.identifier.property">
+                        <expression>(?:(\.)([a-zA-Z\-_0-9]+))</expression>
+                        <capture number="1" name="hcl.operator" />
+                        <capture number="2" name="hcl.identifier.property" />
+                    </scope>
+                </subscopes>
+            </scope>
+            <scope name="hcl.reference.dotted">
+                <starts-with>
+                    <expression>
+                        (?x:                            # extended mode, allows arbitrary whitespace
+                        ([a-z][a-zA_0-9]+)              # The first value is going to be the resource type
+                        (\.)([a-zA-Z][a-zA-Z\-_0-9]+)   # the second is going to be the name
+                                                        # Everything after is going to be the sub-items as normal
+                        )
+                    </expression>
+                    <capture number="1" name="hcl.identifier.type" />
+                    <capture number="2" name="hcl.operator" />
+                    <capture number="3" name="hcl.identifier.argument.name" />
+                </starts-with>
+                <ends-with>
+                    <expression>
+                        <!--
+                            End parsing if we're inside of an interpolation
+                            or
+                            we hit some whitespace
+                            Fortunately putting whitespace into the [] pair, if we match it,
+                            doesn't match this, which is great!
+                        -->
+                        (?=[\}\s\]])
+                    </expression>
+                </ends-with>
+                <subscopes>
+                    <scope name="hcl.reference.lookup">
+                        <starts-with>
+                            <expression>\[</expression>
+                            <capture number="0" name="hcl.bracket.square.open"/>
+                        </starts-with>
+                        <ends-with>
+                            <expression>\]</expression>
+                            <capture number="0" name="hcl.bracket.square.close"/>
+                        </ends-with>
+                        <subscopes>
+                            <!--
+                                This will only ever be a string _or_
+                                another reference
+                            -->
+                            <include syntax="self" collection="numbers" />
+                            <include syntax="self" collection="strings" />
+                            <include syntax="self" collection="types" />
+                        </subscopes>
+                    </scope>
+                    <scope name="hcl.identifier.property">
+                        <!-- Look for more things like us -->
+                        <expression>(?:(\.)([a-zA-Z\-_0-9]+|\*))</expression>
+                        <capture number="1" name="hcl.operator" />
+                        <capture number="2" name="hcl.identifier.property" />
+                    </scope>
+                </subscopes>
+            </scope>
+        </collection>
+        <!--
+            Higher-order values
+            Implements arrays and maps
+        -->
+        <collection name="objects">
+            <scope name="hcl.map">
+                <symbol type="block">
+                    <context behavior="subtree" />
+                </symbol>
+                <starts-with>
+                    <expression>\{</expression>
+                    <capture number="0" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>\}</expression>
+                    <capture number="0" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="objects" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.array">
+                <symbol type="list">
+                    <context behavior="subtree" />
+                </symbol>
+                <starts-with>
+                    <expression>\[</expression>
+                    <capture number="0" name="hcl.bracket.square.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>\]</expression>
+                    <capture number="0" name="hcl.bracket.square.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="types" />
+                </subscopes>
+            </scope>
+        </collection>
+        <collection name="inner-blocks">
+            <scope name="hcl.block.inner">
+                <symbol type="block">"                    
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>([a-z][a-zA-Z0-9\-_]+)(?:\s+("[a-zA-Z0-9\_\-]*"))?\s+(\{)</expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.identifier.type" />
+                    <capture number="4" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="inner-blocks" />
+                </subscopes>
+            </scope>
+        </collection>
+        <collection name="heredoc">
+            <scope name="hcl.block.heredoc.yaml.normal">
+                <symbol type="block">"                    
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(&lt;&lt;)(YAML)</expression>
+                    <capture number="0" name="hcl.operator.heredoc.start" />
+                </starts-with>
+                <ends-with>
+                <!-- Beginning of line -->
+                    <expression>^YAML</expression>
+                    <capture number="0" name="hcl.operator.heredoc.end" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="yaml" collection="*" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.block.heredoc.yaml.indented">
+                <starts-with>
+                    <expression>(&lt;&lt;)-(YAML)</expression>
+                    <capture number="0" name="hcl.operator.heredoc.start" />
+                </starts-with>
+                <ends-with>
+                    <!-- This is a bit of a hack tbh, since we're not enforcing how many 
+                         indents are appropriate for the heredoc
+                    -->
+                    <expression>\s+YAML</expression>
+                    <capture number="0" name="hcl.operator.heredoc.end" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="yaml" collection="*" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.block.heredoc.json.normal">
+                <symbol type="block">"                    
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(&lt;&lt;)(JSON)</expression>
+                    <capture number="0" name="hcl.operator.heredoc.start" />
+                </starts-with>
+                <ends-with>
+                    <!-- Beginning of line -->
+                    <expression>^JSON</expression>
+                    <capture number="0" name="hcl.operator.heredoc.end" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="yaml" collection="*" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.block.heredoc.json.indented">
+                <starts-with>
+                    <expression>(&lt;&lt;)-(JSON)</expression>
+                    <capture number="0" name="hcl.operator.heredoc.start" />
+                </starts-with>
+                <ends-with>
+                        <!-- This is a bit of a hack tbh, since we're not enforcing how many 
+                        indents are appropriate for the heredoc
+                    -->
+                    <expression>\s+JSON</expression>
+                    <capture number="0" name="hcl.operator.heredoc.end" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="json" collection="*" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.block.heredoc.shell.normal">
+                <symbol type="block">"                    
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(&lt;&lt;)(SHELL|BASH)</expression>
+                    <capture number="0" name="hcl.operator.heredoc.start" />
+                </starts-with>
+                <ends-with>
+                    <!-- Beginning of line -->
+                    <template>\2</template>
+                    <capture number="0" name="hcl.operator.heredoc.end" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="shell" collection="*" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.block.heredoc.shell.indented">
+                <starts-with>
+                    <expression>(&lt;&lt;)-(SHELL|BASH)</expression>
+                    <capture number="0" name="hcl.operator.heredoc.start" />
+                </starts-with>
+                <ends-with>
+                    <!-- This is a bit of a hack tbh, since we're not enforcing how many 
+                    indents are appropriate for the heredoc
+                -->
+                    <template>\2</template>
+                    <capture number="0" name="hcl.operator.heredoc.end" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="shell" collection="*" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.block.heredoc.generic.normal">
+                <symbol type="block">"                    
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(&lt;&lt;)([A-Z]+)</expression>
+                    <capture number="0" name="hcl.operator.heredoc.start" />
+                </starts-with>
+                <ends-with>
+                    <!-- Beginning of line -->
+                    <template>\2</template>
+                    <capture number="0" name="hcl.operator.heredoc.end" />
+                </ends-with>
+            </scope>
+            <scope name="hcl.block.heredoc.generic.indented">
+                <starts-with>
+                    <expression>(&lt;&lt;)-([A-Z]+)</expression>
+                    <capture number="0" name="hcl.operator.heredoc.start" />
+                </starts-with>
+                <ends-with>
+                    <!-- This is a bit of a hack tbh, since we're not enforcing how many 
+                    indents are appropriate for the heredoc
+                    -->
+                    <template>\2</template>
+                    <capture number="0" name="hcl.operator.heredoc.end" />
+                </ends-with>
+            </scope>
+        </collection>
+    </collections>
+</syntax>

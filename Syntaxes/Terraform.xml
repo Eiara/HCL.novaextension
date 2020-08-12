@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="terraform">
+    <meta>
+        <name>Terraform</name>
+        <type>structured</type>
+        <preferred-file-extension>tf</preferred-file-extension>
+        <parent>hcl</parent>
+    </meta>
+    
+    <detectors>
+        <extension priority="1.0">tf</extension>
+    </detectors>
+    
+    <indentation>
+    
+    </indentation>
+    
+    <comments>
+        <single>
+                <!-- 
+                    While Terraform does support // that's considered less than ideal
+                -->            
+            <expression>#</expression>
+        </single>
+        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->        
+        <multiline>
+            <starts-with>
+                <expression>\/\*</expression>
+            </starts-with>
+            <ends-with>
+                <expression>\*\/</expression>
+            </ends-with>
+        </multiline>
+    </comments>
+    
+    <brackets>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+    </brackets>
+    
+    <surrounding-pairs>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+        <pair open="&apos;" close="&apos;" />
+        <pair open="&quot;" close="&quot;" />
+    </surrounding-pairs>
+    
+    <scopes>
+        
+        <!-- <include syntax="self" collection="functions" /> -->
+        <!-- 
+            Pulls in comments and the overlapping function definitions 
+        -->
+        <include syntax="hcl" collection="comments" />
+        
+
+        <!-- Our specific block types -->
+        
+        <!-- Generic HCL block types -->
+        <include syntax="self" collection="blocks" />
+        <include syntax="hcl" collection="blocks" />
+        
+        <include syntax="self" collection="keywords" />
+        <include syntax="self" collection="identifiers" />
+
+    </scopes>
+    
+    <collections>
+        
+        <!-- Unused/present for future use -->
+        <collection name="functions">
+            <scope name="terraform.identifier.core.function.extension" suffix="(?=\()">
+                <strings suffix="(?=\()">
+                    <string>base64gzip</string>
+                    <string>base64sha256</string>
+                    <string>base64sha512</string>
+                    <string>filebase64</string>
+                    <string>filebase64sha256</string>
+                    <string>filebase64sha512</string>
+                    <string>filemd5</string>
+                    <string>filesha1</string>
+                    <string>filesha256</string>
+                    <string>filesha512</string>
+                    <string>index</string>
+                    <string>list</string>
+                    <string>map</string>
+                    <string>matchkeys</string>
+                    <string>regex</string>
+                    <string>regexall</string>
+                    <string>setsubtract</string>
+                    <string>templatefile</string>
+                    <string>tobool</string>
+                    <string>tolist</string>
+                    <string>tomap</string>
+                    <string>tonumber</string>
+                    <string>toset</string>
+                    <string>tostring</string>
+                    <string>transpose</string>
+                    <string>trimspace</string>
+                    <string>uuid</string>
+                </strings>
+            </scope>
+        </collection>
+        
+        <collection name="identifiers">
+            <scope name="terraform.identifier.core.type">
+                <strings prefix="(?&lt;!\.)" suffix="(?!\()">
+                    <string>map</string>
+                    <string>list</string>
+                    <string>object</string>
+                    <string>string</string>
+                    <string>number</string>
+                </strings>
+            </scope>
+        </collection>
+        
+        <collection name="blocks">
+        <!-- top-level resource -->
+            <scope name="terraform.resource.definition">
+                <symbol type="block">"                    
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(resource|data)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+                    <capture number="1" name="terraform.keyword" />
+                    <capture number="2" name="terraform.identifier.type" />
+                    <capture number="3" name="terraform.identifier.argument.name" />
+                    <capture number="4" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="hcl" collection="comments" />
+                    <include syntax="hcl" collection="strings" />
+                    <include syntax="hcl" collection="numbers" />
+                    <include syntax="hcl" collection="values" />
+                    <include syntax="hcl" collection="assignments" />
+                    <include syntax="hcl" collection="inner-blocks" />
+                </subscopes>
+            </scope>
+        <!-- Output block -->
+            <scope name="terraform.block.core">
+                <symbol type="block">
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(output|module)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.identifier.argument.name" />
+                    <capture number="3" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="hcl" collection="strings" />
+                    <include syntax="hcl" collection="numbers" />
+                    <include syntax="hcl" collection="values" />
+                    <include syntax="hcl" collection="assignments" />
+                    <include syntax="hcl" collection="comments" />
+                </subscopes>
+            </scope>
+            <scope name="terraform.block.provider">
+                <symbol type="block">
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(provider)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.identifier.argument.name" />
+                    <capture number="3" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="hcl" collection="comments" />
+                    <include syntax="hcl" collection="strings" />
+                    <include syntax="hcl" collection="numbers" />
+                    <include syntax="hcl" collection="values" />
+                    <include syntax="hcl" collection="assignments" />
+                </subscopes>
+            </scope>
+        </collection>
+        <collection name="assignments">
+            <!-- 
+                As far as I can tell, there's no way to modify the parent definitions,
+                so,
+                redefine it and add our own specific function override
+            -->
+            <scope name="terraform.property.assignment">
+                <starts-with>
+                    <expression>(?:\s*)([a-zA-Z0-9\_\-]+)\s*(\=)\s*</expression>
+                    <capture number="1" name="terraform.identifier.property" />
+                    <capture number="2" name="terraform.operator" />
+                </starts-with>
+                <ends-with>
+                    <!--
+                        End the assignment at EOL 
+                        TODO: there may be a better way of doing this?
+                    -->
+                    <expression>$</expression>
+                </ends-with>
+                <subscopes>
+                    <include syntax="hcl" collection="strings" />
+                    <include syntax="hcl" collection="numbers" />
+                    <include syntax="hcl" collection="values" />
+                    <include syntax="hcl" collection="types" />
+                    <!-- Catch our specific function definitions first -->
+                    <include syntax="self" collection="functions" />
+                    <include syntax="hcl" collection="functions" />
+                    <include syntax="hcl" collection="objects" />
+                </subscopes>
+            </scope>
+        </collection>
+    </collections>
+</syntax>
