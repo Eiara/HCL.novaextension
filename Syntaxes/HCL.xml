@@ -230,7 +230,7 @@
                     <capture number="1" name="hcl.bracket.parenthesis.close" />
                 </ends-with>
                 <subscopes>
-                    <scope name="hcl.separator">
+                    <scope name="hcl.operator.separator">
                         <expression>,</expression>
                     </scope>
                     <include syntax="self" collection="strings" />
