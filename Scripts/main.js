@@ -44,10 +44,16 @@ exports.deactivate = function() {
 	}
 }
 
-// Search the users PATH for the Terraform binary.  If it can't be found, error.
+// Locate the Terraform binary in the following way:
+// 1. If the binary is provided by the user configuration, use that.
+// 2. Search the users PATH for the Terraform binary.  
+// 3. If all else fails and the binary can't be found, error.
 function findTerraformBinary() {
 	var pathFromConfig = nova.config.get("hcl.terraform-binary");
 	if (pathFromConfig != "") {
+		if (!nova.fs.stat(pathFromConfig)) {
+			throw new Error(`Cannot find Terraform binary at ${pathFromConfig}.  Please ensure the Terraform binary exists on your PATH environment variable.`);
+		}
 		return pathFromConfig;
 	}
 	var paths = nova.environment.PATH.split(":");

@@ -4,7 +4,7 @@ Based off of [the TextMate Terraform](https://github.com/aurynn/Terraform.tmbund
 
 Implements a generic HCL grammar, and uses it to power the [Terraform](https://terraform.io) and [Packer](https://packer.io)-specific grammars.
 
-Formatting for Terraform files is provided and enabled on save by default (this can be changed in the extension preferences).
+Formatting for Terraform files is provided using your existing Terraform binary and enabled on save by default (this can be changed in the extension preferences).
 
 Eventually this will be moved to the offical Hashicorp language server.
 
