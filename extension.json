@@ -11,5 +11,14 @@
         "url": "https://github.com/Eiara/HCL.novaextension/issues"
     },
     "repository": "https://github.com/Eiara/HCL.novaextension",
-    "homepage": "https://github.com/Eiara/HCL.novaextension"
+    "homepage": "https://github.com/Eiara/HCL.novaextension",
+    "activationEvents": [
+        "onLanguage:terraform",
+        "onLanguage:hcl"
+    ],
+    "entitlements": {
+        "process": true,
+        "filesystem": "readonly"
+    },
+    "main": "main.js",
 }
