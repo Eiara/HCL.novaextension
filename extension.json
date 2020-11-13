@@ -13,12 +13,40 @@
     "repository": "https://github.com/Eiara/HCL.novaextension",
     "homepage": "https://github.com/Eiara/HCL.novaextension",
     "activationEvents": [
-        "onLanguage:terraform",
-        "onLanguage:hcl"
+        "onLanguage:hcl",
+        "onLanguage:terraform"
     ],
     "entitlements": {
         "process": true,
         "filesystem": "readonly"
     },
     "main": "main.js",
+    "config": [
+        {
+            "key": "hcl.terraform-format-on-save",
+            "title": "Terraform Format On Save",
+            "description": "Format Terraform file on save",
+            "type": "boolean",
+            "default": true
+        },
+        {
+            "key": "hcl.terraform-binary",
+            "title": "Terraform Binary Path",
+            "description": "Terraform Binary Path.  Only set this if your Terraform binary is not available in your PATH.  The extension must be reloaded if this changes.",
+            "type": "string",
+            "default": ""
+        }
+    ],
+    "commands": {
+        "editor": [
+            {
+                "title": "Terraform Format",
+                "command": "hcl.terraform-format",
+                "when": "editorHasFocus",
+                "filters": {
+                    "syntaxes": ["terraform"]
+                }
+            }
+        ]
+    }
 }
