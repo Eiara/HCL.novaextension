@@ -32,7 +32,7 @@
         {
             "key": "hcl.terraform-binary",
             "title": "Terraform Binary Path",
-            "description": "Terraform Binary Path.  Only set this if your Terraform binary is not available in your PATH.  The extension must be reloaded if this changes.",
+            "description": "Terraform Binary Path.  Only set this if your Terraform binary is not available in your PATH.",
             "type": "string",
             "default": ""
         }

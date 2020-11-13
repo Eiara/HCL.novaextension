@@ -1,9 +1,10 @@
 var onWillSaveHandler = null;
 var commandRegister = null;
 var configChangeObserver = null;
+var configChangeObserverPath = null;
+var formatterBinPath = null;
 
-exports.activate = function() {
-	var formatterBinPath = null;
+function setTerraformBinPath() {
 	try {
 		formatterBinPath = findTerraformBinary();
 	} catch (err) {
@@ -11,24 +12,40 @@ exports.activate = function() {
 		request.title = nova.localize("Terraform Not Found");
 		request.body = nova.localize(err.message);
 		nova.notifications.add(request);
+		formatterBinPath = null;
 	}
-	
+}
+
+exports.activate = function() {
+	setTerraformBinPath();
+
 	commandRegister = nova.commands.register("hcl.terraform-format", (editor) =>{
-		format(editor, formatterBinPath);
+		format(editor);
 	});
 	
 	if (nova.config.get("hcl.terraform-format-on-save")) {
-		onWillSaveHandler = configureFormatOnSave(formatterBinPath);
+		onWillSaveHandler = configureFormatOnSave();
 	}
 	
 	configChangeObserver = nova.config.observe("hcl.terraform-format-on-save", (newVal, oldVal) => {
 		if (newVal && !oldVal) {
-			onWillSaveHandler = configureFormatOnSave(formatterBinPath);
+			onWillSaveHandler = configureFormatOnSave();
 		}
 		
 		if (!newVal && oldVal && onWillSaveHandler !== null) {
 			onWillSaveHandler.dispose();
 		}
+	});
+	
+	configChangeObserverPath = nova.config.observe("hcl.terraform-binary", (newVal, oldVal) => {
+		let request = new NotificationRequest("terraform-path-changed");
+		request.title = nova.localize("Terraform Path Changed");
+		request.body = "Using system default for Terraform binary path."
+		if (newVal != "") {
+			request.body = nova.localize(`Terraform binary path updated to ${newVal} in config.  Validating binary exists...`);
+		}
+		nova.notifications.add(request);
+		setTerraformBinPath();
 	});
 }
 
@@ -41,6 +58,9 @@ exports.deactivate = function() {
 	}
 	if (configChangeObserver !== null) {
 		configChangeObserver.dispose();
+	}
+	if (configChangeObserverPath !== null) {
+		configChangeObserverPath.dispose();
 	}
 }
 
@@ -69,11 +89,18 @@ function findTerraformBinary() {
 // Nova had a several second delay before updating the UI.  To get around this, the fmt command
 // outputs to stdout, read into a temporary string and upon process exit a replace edit operation 
 // overwrites the existing file with the new contents.
-function format(editor, formatterBinPath) {
+function format(editor) {
 	var options = {
 		args: ["fmt", "-write=false", "-list=false", editor.document.path]
 	};
 
+	if (formatterBinPath == null) {
+		let request = new NotificationRequest("terraform-not-found");
+		request.title = nova.localize("Terraform Not Found");
+		request.body = nova.localize("Cannot find Terraform binary.  Please ensure the Terraform binary exists on your PATH environment variable.");
+		nova.notifications.add(request);
+		return;
+	}
 	var process = new Process(formatterBinPath, options);
 	process.start();
 	var finalText = "";
@@ -88,7 +115,7 @@ function format(editor, formatterBinPath) {
 	});
 }
 
-function configureFormatOnSave(formatterBinPath) {
+function configureFormatOnSave() {
 	return nova.workspace.activeTextEditor.onWillSave((editor) => {
 		format(editor, formatterBinPath);
 	});
