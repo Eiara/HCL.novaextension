@@ -538,7 +538,7 @@
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
-                    <expression>(&lt;&lt;)([A-Z]+)</expression>
+                    <expression>(&lt;&lt;)(SHELL|BASH)</expression>
                     <capture number="0" name="hcl.operator.heredoc.start" />
                 </starts-with>
                 <ends-with>
@@ -552,7 +552,7 @@
             </scope>
             <scope name="hcl.block.heredoc.shell.indented">
                 <starts-with>
-                    <expression>(&lt;&lt;)-([A-Z]+)</expression>
+                    <expression>(&lt;&lt;)-(SHELL|BASH)</expression>
                     <capture number="0" name="hcl.operator.heredoc.start" />
                 </starts-with>
                 <ends-with>

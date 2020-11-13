@@ -118,43 +118,6 @@
         
         <collection name="blocks">
         <!-- top-level resource -->
-            <scope name="terraform.locals.definition">
-                <symbol type="block">
-                    <context behavior="subtree" fold-type="function" />
-                </symbol>
-                <starts-with>
-                    <expression>(locals)\s+(\{)</expression>
-                    <capture number="1" name="terraform.keyword" />
-                </starts-with>
-                <ends-with>
-                    <expression>(\})</expression>
-                    <capture number="1" name="hcl.bracket.curly.close" />
-                </ends-with>
-                <subscopes>
-                    <include syntax="hcl" collection="assignments" />
-                </subscopes>
-            </scope>
-            <scope name="terraform.variable.definition">
-                <symbol type="block">
-                    <context behavior="subtree" fold-type="function" />
-                </symbol>
-                <starts-with>
-                    <expression>(variable)\s+("?[a-zA-Z][a-zA-Z0-9\_\-]*"?)\s+(\{)</expression>
-                    <capture number="1" name="terraform.keyword" />
-                    <capture number="2" name="terraform.identifier.type" />
-                    <capture number="3" name="hcl.bracket.curly.open" />
-                </starts-with>
-                <ends-with>
-                    <expression>(\})</expression>
-                    <capture number="1" name="hcl.bracket.curly.close" />
-                </ends-with>
-                <subscopes>
-                    <include syntax="hcl" collection="comments" />
-                    <include syntax="hcl" collection="assignments" />
-                    <include syntax="hcl" collection="inner-blocks" />
-                    <include syntax="hcl" collection="types" />
-                </subscopes>
-            </scope>
             <scope name="terraform.resource.definition">
                 <symbol type="block">"                    
                     <context behavior="subtree" fold-type="function" />
@@ -218,28 +181,6 @@
                 </ends-with>
                 <subscopes>
                     <include syntax="hcl" collection="comments" />
-                    <include syntax="hcl" collection="inner-blocks" />
-                    <include syntax="hcl" collection="strings" />
-                    <include syntax="hcl" collection="numbers" />
-                    <include syntax="hcl" collection="values" />
-                    <include syntax="hcl" collection="assignments" />
-                </subscopes>
-            </scope>
-            <scope name="terraform.block.terraform">
-                <symbol type="block">
-                    <context behavior="subtree" fold-type="function" />
-                </symbol>
-                <starts-with>
-                    <expression>(terraform)\s+(\{)</expression>
-                    <capture number="1" name="hcl.keyword" />
-                </starts-with>
-                <ends-with>
-                    <expression>(\})</expression>
-                    <capture number="1" name="hcl.bracket.curly.close" />
-                </ends-with>
-                <subscopes>
-                    <include syntax="hcl" collection="comments" />
-                    <include syntax="hcl" collection="inner-blocks" />
                     <include syntax="hcl" collection="strings" />
                     <include syntax="hcl" collection="numbers" />
                     <include syntax="hcl" collection="values" />
