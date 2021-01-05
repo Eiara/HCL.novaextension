@@ -97,24 +97,65 @@
         <!-- generic block types - variables and locals -->
         <collection name="blocks">
         <!-- top-level variable and output blocks -->
-            <scope name="hcl.block.core">
-                <symbol type="block">
-                    <context behavior="subtree" fold-type="function" />
+            <scope name="hcl.block.variable.definition" lookup="documentation">
+                <symbol type="constructor" scope="global">
+                    <context behavior="whitespace" group="variables" foldable="true" />
+                    <display-name>
+                        <!-- <component variable="name" /> -->
+                        <component selector="name" prepend="var." />
+                    </display-name>
+                    <!-- <context behavior="subtree" group="variables" foldable="true" /> -->
                 </symbol>
                 <starts-with>
-                    <expression>(variable|locals)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+                    <expression>(variable)\s+(")([a-zA-Z][a-zA-Z0-9\_\-]*)(")\s+(\{)</expression>
                     <capture number="1" name="hcl.keyword" />
-                    <capture number="2" name="hcl.identifier.argument.name" />
-                    <capture number="3" name="hcl.bracket.curly.open" />
+                    <capture number="3" name="hcl.identifier.variable.name" />
+                    <capture number="5" name="hcl.bracket.curly.open" />
                 </starts-with>
                 <ends-with>
                     <expression>(\})</expression>
                     <capture number="1" name="hcl.bracket.curly.close" />
                 </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
+                    <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="inner-blocks" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.block.variable.definition" lookup="documentation">
+                <symbol type="constructor" scope="global">
+                    <context behavior="whitespace" group="variables" foldable="true" />
+                    <!-- <context behavior="subtree" group="variables" foldable="true" /> -->
+                </symbol>
+                <starts-with>
+                    <expression>(locals)\s+(\{)</expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
+                    <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="inner-blocks" />
+                </subscopes>
             </scope>
             <scope name="hcl.block.resource.definition">
-                <symbol type="block">"                    
-                    <context behavior="subtree" fold-type="function" />
+                <symbol type="type" scope="global">
+                    <context behavior="whitespace" group="variables" foldable="true" />
+                    <display-name>
+                        <component variable="name" />
+                        <!-- <component selector="name" prepend="var." /> -->
+                    </display-name>
+                    <!-- <context behavior="subtree" group="variables" foldable="true" /> -->
                 </symbol>
                 <starts-with>
                     <expression>([a-z][a-zA-Z0-9\-_]+)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
@@ -243,7 +284,8 @@
         <collection name="assignments">
             <scope name="hcl.property.assignment">
                 <starts-with>
-                    <expression>(?:\s*)([a-zA-Z0-9\_\-]+)\s*(\=)\s*</expression>
+                    <!-- TODO: Figure out how to ensure that the quotes are matched properly -->
+                    <expression>(?:\s*)(["]{0,1}[a-z\:A-Z0-9\_\-]+["]{0,1})\s*(\=)\s*</expression>
                     <capture number="1" name="hcl.identifier.property" />
                     <capture number="2" name="hcl.operator" />
                 </starts-with>
@@ -256,6 +298,7 @@
                 </ends-with>
                 <subscopes>
                     <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="comments" />
                     <include syntax="self" collection="numbers" />
                     <include syntax="self" collection="values" />
                     <include syntax="self" collection="types" />

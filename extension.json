@@ -3,7 +3,7 @@
     "name": "HCL",
     "vendor": "Eiara Limited",
     "description": "Language support for Hashicorp's Terraform and Packer",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "categories": ["languages"],
     "keywords": ["terraform", "packer"],
     "license": "MIT",
@@ -27,7 +27,7 @@
             "title": "Terraform Format On Save",
             "description": "Format Terraform file on save",
             "type": "boolean",
-            "default": true
+            "default": false
         },
         {
             "key": "hcl.terraform-binary",
