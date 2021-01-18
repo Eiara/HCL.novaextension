@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<syntax name="hcl">
+<syntax name="hcl" subsyntax="true">
     <meta>
         <name>HCL</name>
         <type>structured</type>
@@ -97,7 +97,7 @@
         <!-- generic block types - variables and locals -->
         <collection name="blocks">
         <!-- top-level variable and output blocks -->
-            <scope name="hcl.block.core">
+            <scope name="hcl.block.variable">
                 <symbol type="block">
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
@@ -111,6 +111,14 @@
                     <expression>(\})</expression>
                     <capture number="1" name="hcl.bracket.curly.close" />
                 </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
+                    <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="inner-blocks" />
+                </subscopes>
             </scope>
             <scope name="hcl.block.resource.definition">
                 <symbol type="block">"                    
@@ -243,7 +251,19 @@
         <collection name="assignments">
             <scope name="hcl.property.assignment">
                 <starts-with>
-                    <expression>(?:\s*)([a-zA-Z0-9\_\-]+)\s*(\=)\s*</expression>
+                    <expression>
+                    (?x:             # turn on extended mode
+                        \s*           # whitespace
+                        (
+                            &quot;[a-zA-Z0-9\:\_\- ]+&quot; # Things in strings
+                            |                                 # or
+                            [a-zA-Z0-9\_]+                   # normal characters
+                        )
+                        [ \t]*                               # some amount of whitespace
+                        (\=) # equals sign
+                    )
+                    </expression>
+                    
                     <capture number="1" name="hcl.identifier.property" />
                     <capture number="2" name="hcl.operator" />
                 </starts-with>
@@ -256,6 +276,7 @@
                 </ends-with>
                 <subscopes>
                     <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="comments" />
                     <include syntax="self" collection="numbers" />
                     <include syntax="self" collection="values" />
                     <include syntax="self" collection="types" />
@@ -306,8 +327,6 @@
                     <capture number="1" name="hcl.keyword" />
                     <capture number="2" name="hcl.operator" />
                     <capture number="3" name="hcl.identifier.property" />
-                    <capture number="4" name="hcl.operator" />
-                    <capture number="5" name="hcl.identifer.property" />
                 </starts-with>
                 <ends-with>
                     <expression>
@@ -453,7 +472,7 @@
                     <expression>([a-z][a-zA-Z0-9\-_]+)(?:\s+("[a-zA-Z0-9\_\-]*"))?\s+(\{)</expression>
                     <capture number="1" name="hcl.keyword" />
                     <capture number="2" name="hcl.identifier.type" />
-                    <capture number="4" name="hcl.bracket.curly.open" />
+                    <capture number="3" name="hcl.bracket.curly.open" />
                 </starts-with>
                 <ends-with>
                     <expression>(\})</expression>

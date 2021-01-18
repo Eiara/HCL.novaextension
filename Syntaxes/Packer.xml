@@ -55,7 +55,7 @@
     
     <collections>
         <!-- Unused/present for future use -->
-        <collection name="functions">
+        <!-- <collection name="functions">
             <scope name="packer.identifier.core.function.name" suffix="(?=\()">
                 <strings suffix="(?=\()">
                     <script>regex_replace</script>
@@ -64,7 +64,7 @@
                     <script>uuidv4</script>
                 </strings>
             </scope>
-        </collection>
+        </collection> -->
         <collection name="blocks">
             <!-- top-level resource -->
             <scope name="packer.resource.build">
@@ -74,7 +74,7 @@
                 <starts-with>
                     <expression>(build)\s+(\{)</expression>
                     <capture number="1" name="packer.keyword" />
-                    <capture number="4" name="hcl.bracket.curly.open" />
+                    <capture number="2" name="hcl.bracket.curly.open" />
                 </starts-with>
                 <ends-with>
                     <expression>(\})</expression>

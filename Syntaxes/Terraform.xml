@@ -4,7 +4,7 @@
         <name>Terraform</name>
         <type>structured</type>
         <preferred-file-extension>tf</preferred-file-extension>
-        <parent>hcl</parent>
+        <!-- <parent>hcl</parent> -->
     </meta>
     
     <detectors>
@@ -118,6 +118,28 @@
         
         <collection name="blocks">
         <!-- top-level resource -->
+        <scope name="terraform.block.global">
+            <symbol>
+                <context behavior="subtree" fold-type="function" />
+            </symbol>
+            <starts-with>
+                <expression>(terraform)\s+(\{)</expression>
+                <capture number="1" name="terraform.keyword" />
+                <capture number="2" name="hcl.bracket.curly.open" />
+            </starts-with>
+            <ends-with>
+                <expression>(\})</expression>
+                <capture number="1" name="hcl.bracket.curly.close" />
+            </ends-with>
+            <subscopes>
+                <include syntax="hcl" collection="comments" />
+                <include syntax="hcl" collection="strings" />
+                <include syntax="hcl" collection="numbers" />
+                <include syntax="hcl" collection="values" />
+                <include syntax="hcl" collection="assignments" />
+                <include syntax="hcl" collection="inner-blocks" />
+            </subscopes>
+        </scope>
             <scope name="terraform.resource.definition">
                 <symbol type="block">"                    
                     <context behavior="subtree" fold-type="function" />
@@ -158,7 +180,7 @@
                     <capture number="1" name="hcl.bracket.curly.close" />
                 </ends-with>
                 <subscopes>
-                    <include syntax="hcl" collection="strings" />
+                    <!-- <include syntax="hcl" collection="strings" /> -->
                     <include syntax="hcl" collection="numbers" />
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
