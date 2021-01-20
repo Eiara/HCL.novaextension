@@ -180,10 +180,11 @@
                     <capture number="1" name="hcl.bracket.curly.close" />
                 </ends-with>
                 <subscopes>
-                    <!-- <include syntax="hcl" collection="strings" /> -->
+                    <include syntax="hcl" collection="strings" />
                     <include syntax="hcl" collection="numbers" />
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
+                    <include syntax="hcl" collection="objects" />
                     <include syntax="hcl" collection="comments" />
                 </subscopes>
             </scope>
@@ -207,6 +208,7 @@
                     <include syntax="hcl" collection="numbers" />
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
+                    <include syntax="self" collection="syntax" />
                 </subscopes>
             </scope>
         </collection>

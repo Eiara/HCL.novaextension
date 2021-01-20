@@ -1,0 +1,37 @@
+{
+  "clips" : [
+    {
+      "children" : [
+        {
+          "content" : "variable \"${:name}\" {\n\ttype = string\n\tdescription = \"${:description}\"\n\tdefault = \"${:content}\"\n}",
+          "name" : "variable.string",
+          "scope" : "editor",
+          "syntax" : "terraform",
+          "trigger" : "var"
+        },
+        {
+          "content" : "variable \"${:name}\" {\n  type = map\n  description = \"${:description}\"\n  default = {\n    \n  }\n}",
+          "name" : "variable.map",
+          "scope" : "editor",
+          "syntax" : "terraform",
+          "trigger" : "varm"
+        },
+        {
+          "content" : "variable \"${:name}\" {\n  type = object({\n  \t${:name} = ${:type}\n  })\n  description = \"${:description}\"\n  default = {}\n}",
+          "name" : "variable.object",
+          "scope" : "editor",
+          "syntax" : "terraform",
+          "trigger" : "varo"
+        },
+        {
+          "content" : "variable \"${:name}\" {\n  type = list\n  description = \"${:description}\"\n  default = [\n    \n  ]\n}",
+          "name" : "variable.list",
+          "scope" : "editor",
+          "syntax" : "terraform",
+          "trigger" : "varl"
+        }
+      ],
+      "name" : "general"
+    }
+  ]
+}

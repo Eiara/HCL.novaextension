@@ -3,9 +3,13 @@
     "name": "HCL",
     "vendor": "Eiara Limited",
     "description": "Language support for Hashicorp's Terraform and Packer",
-    "version": "0.1.0",
-    "categories": ["languages"],
+    "version": "0.1.1",
+    "categories": ["languages","clips"],
     "keywords": ["terraform", "packer"],
+    "activationEvents": [
+        "onLanguage:terraform",
+        "onLanguage:packer",
+      ],
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/Eiara/HCL.novaextension/issues"

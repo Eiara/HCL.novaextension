@@ -93,6 +93,15 @@
                     <string>false</string>
                 </strings>
             </scope>
+            <scope name="hcl.keyword">
+                <strings>
+                    <!-- <string>list</string> -->
+                    <!-- <string>map</string> -->
+                    <string>any</string>
+                    <string>string</string>
+                
+                </strings>
+            </scope>
         </collection>
         <!-- generic block types - variables and locals -->
         <collection name="blocks">
@@ -117,7 +126,9 @@
                     <include syntax="self" collection="numbers" />
                     <include syntax="self" collection="values" />
                     <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="functions" />
                     <include syntax="self" collection="inner-blocks" />
+                    <include syntax="self" collection="objects" />
                 </subscopes>
             </scope>
             <scope name="hcl.block.resource.definition">
@@ -141,6 +152,7 @@
                     <include syntax="self" collection="numbers" />
                     <include syntax="self" collection="values" />
                     <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="objects" />
                     <include syntax="self" collection="inner-blocks" />
                 </subscopes>
             </scope>
@@ -148,7 +160,7 @@
         <collection name="functions">
         <!-- Globally-available function names -->
         <!-- Not used at present, here for future use -->
-            <scope name="hcl.identifier.core.function">
+            <!-- <scope name="hcl.identifier.core.function">
                 <strings  suffix="(?=\()">
                     <string>abs</string>
                     <string>abspath</string>
@@ -226,16 +238,16 @@
                     <string>yamlencode</string>
                     <string>zipmap</string>
                 </strings>
-            </scope>
+            </scope> -->
             <scope name="hcl.identifier.function.call">
                 <starts-with>
-                    <expression>([a-zA-Z0-9]+)(\()</expression>
+                    <expression>([a-zA-Z0-9]+)\s*(\()</expression>
                     <capture number="1" name="hcl.identifier.core.function" />
-                    <capture number="2" name="hcl.bracket.parenthesis.open" />
+                    <capture number="2" name="hcl.bracket.open" />
                 </starts-with>
                 <ends-with>
-                    <expression>(\))</expression>
-                    <capture number="1" name="hcl.bracket.parenthesis.close" />
+                    <expression>\)</expression>
+                    <capture number="0" name="hcl.bracket.close" />
                 </ends-with>
                 <subscopes>
                     <scope name="hcl.operator.separator">
@@ -250,40 +262,20 @@
         <!-- Inside of blocks, the foo = ... structure -->
         <collection name="assignments">
             <scope name="hcl.property.assignment">
-                <starts-with>
-                    <expression>
-                    (?x:             # turn on extended mode
-                        \s*           # whitespace
-                        (
-                            &quot;[a-zA-Z0-9\:\_\- ]+&quot; # Things in strings
-                            |                                 # or
-                            [a-zA-Z0-9\_]+                   # normal characters
-                        )
-                        [ \t]*                               # some amount of whitespace
-                        (\=) # equals sign
+            <expression>
+                (?x:             # turn on extended mode
+                    \s*           # whitespace
+                    (
+                        [a-zA-Z0-9\_]+                   # normal characters
                     )
-                    </expression>
-                    
-                    <capture number="1" name="hcl.identifier.property" />
-                    <capture number="2" name="hcl.operator" />
-                </starts-with>
-                <ends-with>
-                    <!--
-                        End the assignment at EOL 
-                        TODO: there may be a better way of doing this?
-                    -->
-                    <expression>$</expression>
-                </ends-with>
-                <subscopes>
-                    <include syntax="self" collection="strings" />
-                    <include syntax="self" collection="comments" />
-                    <include syntax="self" collection="numbers" />
-                    <include syntax="self" collection="values" />
-                    <include syntax="self" collection="types" />
-                    <include syntax="self" collection="functions" />
-                    <include syntax="self" collection="objects" />
-                    <include syntax="self" collection="heredoc" />
-                </subscopes>
+                    [ \t]*                               # some amount of non-linebreak whitespace
+                    (\=) # equals sign
+                    (?![&gt;]) # negative lookahead
+                )
+                </expression>
+                
+                <capture number="1" name="hcl.identifier.property" />
+                <capture number="2" name="hcl.operator" />
             </scope>
         </collection>
         <!-- the if/for/foreach stuff features in HCL2 -->
@@ -380,8 +372,9 @@
                     <capture number="2" name="hcl.operator" />
                     <capture number="3" name="hcl.identifier.argument.name" />
                 </starts-with>
-                <ends-with>
-                    <expression>
+                <ends-with />
+                <subscopes>
+                    <cut-off>
                         <!--
                             End parsing if we're inside of an interpolation
                             or
@@ -389,10 +382,8 @@
                             Fortunately putting whitespace into the [] pair, if we match it,
                             doesn't match this, which is great!
                         -->
-                        (?=[\}\s\]])
-                    </expression>
-                </ends-with>
-                <subscopes>
+                        <expression>(?=[\}\s\]\)])</expression>
+                    </cut-off>
                     <scope name="hcl.reference.lookup">
                         <starts-with>
                             <expression>\[</expression>
@@ -440,8 +431,25 @@
                 </ends-with>
                 <subscopes>
                     <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="expressions" />
                     <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="types" />
                     <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="syntax" />
+                    <scope name="hcl.map.assignment">
+                        <expression>
+                            (?x:             # turn on extended mode
+                                \s*           # whitespace
+                                (&quot;[a-zA-Z0-9\:\_\- \.]+&quot;)
+                                [ \t]*                               # some amount of non-linebreak whitespace
+                                (\=) # equals sign
+                            )
+                            </expression>
+                            <capture number="1" name="hcl.identifier.property" />
+                            <capture number="2" name="hcl.operator" />
+                    </scope>
+                    
                 </subscopes>
             </scope>
             <scope name="hcl.array">
@@ -457,9 +465,13 @@
                     <capture number="0" name="hcl.bracket.square.close" />
                 </ends-with>
                 <subscopes>
-                    <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="comments" />
                     <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="expressions" />
+                    <include syntax="self" collection="assignments" />
                     <include syntax="self" collection="types" />
+                    <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="syntax" />
                 </subscopes>
             </scope>
         </collection>
@@ -482,6 +494,8 @@
                     <include syntax="self" collection="comments" />
                     <include syntax="self" collection="assignments" />
                     <include syntax="self" collection="inner-blocks" />
+                    <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="syntax" />
                 </subscopes>
             </scope>
         </collection>
@@ -611,6 +625,73 @@
                     <template>\2</template>
                     <capture number="0" name="hcl.operator.heredoc.end" />
                 </ends-with>
+            </scope>
+        </collection>
+        <collection name="expressions">
+            <scope name="hcl.expression.for-in.object">
+                <starts-with>
+                    <expression>
+                    (?:\s*)(for)\s+([a-zA-Z][a-zA-Z0-9\_\-]+)\s+(in)\s+
+                    </expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.identifier.generic" />
+                    <capture number="3" name="hcl.keyword" />
+                </starts-with>
+                <ends-with>
+                    <expression>:</expression>
+                    <capture number="0" name="hcl.colon" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="types" />
+                    <include syntax="self" collection="functions" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.expression.for-in.object.value">
+            <starts-with>
+                <expression>([a-zA-Z][a-zA-Z0-9]+)\s+(\=\&gt;)</expression>
+                <capture number="1" name="hcl.identifier.generic" />
+                <capture number="2" name="hcl.operator" />
+            </starts-with>
+            <ends-with />
+                <subscopes>
+                    <cut-off>
+                        <expression>(?=[\}\s\]\)]|if)</expression>
+                    </cut-off>
+                    <include syntax="self" collection="types" />
+                    <include syntax="self" collection="functions" />
+                </subscopes>
+            </scope>
+            <!-- <scope name="hcl.expression.ternary">
+                <expression>(?:\s*).+(\?).+(\:).*</expression>
+                <subscopes>
+                </subscopes>
+            </scope> -->
+        </collection>
+        <collection name="syntax">
+            <scope name="hcl.expression.if">
+                <starts-with>
+                    <expression>\b(if)</expression>
+                    <capture number="0" name="hcl.keyword" />
+                </starts-with>
+                <ends-with />
+                <subscopes>
+                    <cut-off>
+                        <!--
+                            End parsing if we're inside of an interpolation
+                            or
+                            we hit some whitespace
+                            Fortunately putting whitespace into the [] pair, if we match it,
+                            doesn't match this, which is great!
+                        -->
+                        <expression>(?=[\}\]\)])</expression>
+                    </cut-off>
+                    <include syntax="self" collection="types" />
+                    <include syntax="self" collection="functions" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.operators">
+                <expression>(\+|\-|\*|/|%|\=\=|!\=|\&lt;|\&gt;|\&lt;\=|\&gt;\=|&amp;&amp;|\|\|)</expression>
+                
             </scope>
         </collection>
     </collections>
