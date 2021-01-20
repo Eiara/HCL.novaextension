@@ -133,7 +133,7 @@
             </scope>
             <scope name="hcl.block.resource.definition">
                 <symbol type="block">"                    
-                    <context behavior="subtree" fold-type="function" />
+                    <!-- <context behavior="subtree" group="variables" foldable="true" /> -->
                 </symbol>
                 <starts-with>
                     <expression>([a-z][a-zA-Z0-9\-_]+)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>

@@ -141,8 +141,12 @@
             </subscopes>
         </scope>
             <scope name="terraform.resource.definition">
-                <symbol type="block">"                    
+                <symbol type="constructor">"                    
                     <context behavior="subtree" fold-type="function" />
+                    <display-name>
+                        <component selector="identifier.type" append="." replace="&quot;" replace-with="" />
+                        <component variable="name" replace="&quot;" replace-with="" />
+                    </display-name>
                 </symbol>
                 <starts-with>
                     <expression>(resource|data)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
@@ -166,14 +170,18 @@
             </scope>
         <!-- Output block -->
             <scope name="terraform.block.core">
-                <symbol type="block">
+                <symbol type="constructor">
                     <context behavior="subtree" fold-type="function" />
+                    <display-name>
+                        <component selector="keyword" append="." />
+                        <component variable="name" />
+                    </display-name>
                 </symbol>
                 <starts-with>
-                    <expression>(output|module)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+                    <expression>(output|module)\s+(")([a-zA-Z][a-zA-Z0-9\_\-]*)(")\s+(\{)</expression>
                     <capture number="1" name="hcl.keyword" />
-                    <capture number="2" name="hcl.identifier.argument.name" />
-                    <capture number="3" name="hcl.bracket.curly.open" />
+                    <capture number="3" name="hcl.identifier.argument.name" />
+                    <capture number="5" name="hcl.bracket.curly.open" />
                 </starts-with>
                 <ends-with>
                     <expression>(\})</expression>
