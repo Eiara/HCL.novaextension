@@ -1,7 +1,7 @@
 {
     "identifier": "nz.eiara.HCL",
     "name": "HCL",
-    "vendor": "Eiara Limited",
+    "organization": "Eiara Limited",
     "description": "Language support for Hashicorp's Terraform and Packer",
     "version": "0.1.2",
     "categories": ["languages","clips"],
