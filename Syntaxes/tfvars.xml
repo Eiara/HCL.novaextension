@@ -8,6 +8,14 @@
     <detectors>
         <extension priority="1.0">tfvars</extension>
     </detectors>
+    <indentation>
+        <increase>
+            <expression>(\{[^}\"]*$)|(\[[^\]\"]*$)|(\([^)\"]*$)</expression>
+        </increase>
+        <decrease>
+            <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
+        </decrease>
+    </indentation>
     <comments>
         <single>
                 <!-- 

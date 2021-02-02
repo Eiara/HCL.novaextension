@@ -250,6 +250,7 @@
                     <capture number="0" name="hcl.bracket.close" />
                 </ends-with>
                 <subscopes>
+                
                     <scope name="hcl.operator.separator">
                         <expression>,</expression>
                     </scope>
@@ -279,9 +280,7 @@
             </scope>
         </collection>
         <!-- the if/for/foreach stuff features in HCL2 -->
-        <collection name="control-flow">
-        
-        </collection>
+
         
         <!-- For handling for in-string variable interpolation -->
         <collection name="interpolations">
@@ -320,19 +319,11 @@
                     <capture number="2" name="hcl.operator" />
                     <capture number="3" name="hcl.identifier.property" />
                 </starts-with>
-                <ends-with>
-                    <expression>
-                        <!--
-                            End parsing if we're inside of an interpolation
-                            or
-                            we hit some whitespace
-                            Fortunately putting whitespace into the [] pair, if we match it,
-                            doesn't match this, which is great!
-                        -->
-                        (?=[\}\s\]])
-                    </expression>
-                </ends-with>
+                <ends-with />
                 <subscopes>
+                    <cut-off>
+                        <expression>(?=[\}\s\n\]\)])</expression>
+                    </cut-off>
                     <scope name="hcl.reference.lookup">
                         <starts-with>
                             <expression>\[</expression>
@@ -430,7 +421,9 @@
                     <capture number="0" name="hcl.bracket.curly.close" />
                 </ends-with>
                 <subscopes>
+                    <include syntax="self" collection="heredoc" />
                     <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="numbers" />
                     <include syntax="self" collection="strings" />
                     <include syntax="self" collection="expressions" />
                     <include syntax="self" collection="assignments" />
@@ -492,6 +485,8 @@
                 </ends-with>
                 <subscopes>
                     <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="functions" />
                     <include syntax="self" collection="assignments" />
                     <include syntax="self" collection="inner-blocks" />
                     <include syntax="self" collection="objects" />

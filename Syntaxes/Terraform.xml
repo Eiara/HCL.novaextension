@@ -12,7 +12,12 @@
     </detectors>
     
     <indentation>
-    
+        <increase>
+            <expression>(\{[^}\"]*$)|(\[[^\]\"]*$)|(\([^)\"]*$)</expression>
+        </increase>
+        <decrease>
+            <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
+        </decrease>
     </indentation>
     
     <comments>
@@ -165,6 +170,9 @@
                     <include syntax="hcl" collection="numbers" />
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
+                    <include syntax="hcl" collection="functions" />
+                    <include syntax="hcl" collection="objects" />
+                    <include syntax="hcl" collection="heredoc" />
                     <include syntax="hcl" collection="inner-blocks" />
                 </subscopes>
             </scope>
@@ -192,6 +200,8 @@
                     <include syntax="hcl" collection="numbers" />
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
+                    <include syntax="hcl" collection="functions" />
+                    <include syntax="hcl" collection="types" />
                     <include syntax="hcl" collection="objects" />
                     <include syntax="hcl" collection="comments" />
                 </subscopes>
