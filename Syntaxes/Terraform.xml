@@ -165,6 +165,7 @@
                     <capture number="1" name="hcl.bracket.curly.close" />
                 </ends-with>
                 <subscopes>
+                    <include syntax="hcl" collection="types" />
                     <include syntax="hcl" collection="comments" />
                     <include syntax="hcl" collection="strings" />
                     <include syntax="hcl" collection="numbers" />
@@ -196,12 +197,14 @@
                     <capture number="1" name="hcl.bracket.curly.close" />
                 </ends-with>
                 <subscopes>
+                    <include syntax="hcl" collection="types" />
                     <include syntax="hcl" collection="strings" />
+                    <include syntax="hcl" collection="inner-blocks" />
                     <include syntax="hcl" collection="numbers" />
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
                     <include syntax="hcl" collection="functions" />
-                    <include syntax="hcl" collection="types" />
+                    
                     <include syntax="hcl" collection="objects" />
                     <include syntax="hcl" collection="comments" />
                 </subscopes>
