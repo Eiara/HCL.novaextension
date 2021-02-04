@@ -8,7 +8,7 @@
     "keywords": ["terraform", "packer"],
     "activationEvents": [
         "onLanguage:terraform",
-        "onLanguage:packer",
+        "onLanguage:packer"
       ],
     "license": "MIT",
     "bugs": {
