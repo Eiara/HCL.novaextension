@@ -111,10 +111,34 @@
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
-                    <expression>(variable|locals)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+                    <expression>(variable)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
                     <capture number="1" name="hcl.keyword" />
                     <capture number="2" name="hcl.identifier.argument.name" />
                     <capture number="3" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
+                    <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="functions" />
+                    <include syntax="self" collection="inner-blocks" />
+                    <include syntax="self" collection="objects" />
+                </subscopes>
+            </scope>
+            <scope name="hcl.block.locals">
+                <symbol type="block">
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(locals)\s+(\{)</expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.bracket.curly.open" />
                 </starts-with>
                 <ends-with>
                     <expression>(\})</expression>
