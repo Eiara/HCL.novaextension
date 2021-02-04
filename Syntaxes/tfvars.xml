@@ -2,7 +2,7 @@
     <meta>
         <name>tfvars</name>
         <type>structured</type>
-        <preferred-file-extension>tf</preferred-file-extension>
+        <preferred-file-extension>tfvars</preferred-file-extension>
     </meta>
     
     <detectors>
