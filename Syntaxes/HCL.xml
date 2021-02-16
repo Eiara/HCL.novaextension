@@ -346,7 +346,7 @@
                 <ends-with />
                 <subscopes>
                     <cut-off>
-                        <expression>(?=[\}\s\n\]\)])</expression>
+                        <expression>(?=[\}\s\n\]\):])</expression>
                     </cut-off>
                     <scope name="hcl.reference.lookup">
                         <starts-with>
@@ -397,7 +397,7 @@
                             Fortunately putting whitespace into the [] pair, if we match it,
                             doesn't match this, which is great!
                         -->
-                        <expression>(?=[\}\s\]\)])</expression>
+                        <expression>(?=[\}\s\n\]\):])</expression>
                     </cut-off>
                     <scope name="hcl.reference.lookup">
                         <starts-with>
