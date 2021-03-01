@@ -99,7 +99,7 @@
                     <!-- <string>map</string> -->
                     <string>any</string>
                     <string>string</string>
-                
+                    <string>number</string>
                 </strings>
             </scope>
         </collection>
@@ -295,7 +295,7 @@
                     )
                     [ \t]*                               # some amount of non-linebreak whitespace
                     (\=) # equals sign
-                    (?![&gt;]) # negative lookahead
+                    (?![&gt;\=]) # negative lookahead
                 )
                 </expression>
                 
@@ -346,7 +346,7 @@
                 <ends-with />
                 <subscopes>
                     <cut-off>
-                        <expression>(?=[\}\s\n\]\):])</expression>
+                        <expression>(?=[\}\s\n\]\):,])</expression>
                     </cut-off>
                     <scope name="hcl.reference.lookup">
                         <starts-with>
@@ -387,7 +387,9 @@
                     <capture number="2" name="hcl.operator" />
                     <capture number="3" name="hcl.identifier.argument.name" />
                 </starts-with>
-                <ends-with />
+                <ends-with>
+                    <expression>(?=[\}\s\n\]\):,])</expression>
+                </ends-with>
                 <subscopes>
                     <cut-off>
                         <!--
@@ -397,7 +399,7 @@
                             Fortunately putting whitespace into the [] pair, if we match it,
                             doesn't match this, which is great!
                         -->
-                        <expression>(?=[\}\s\n\]\):])</expression>
+                        <expression>(?=[\}\s\n\]\):,])</expression>
                     </cut-off>
                     <scope name="hcl.reference.lookup">
                         <starts-with>
@@ -456,11 +458,16 @@
                     <include syntax="self" collection="syntax" />
                     <scope name="hcl.map.assignment">
                         <expression>
-                            (?x:             # turn on extended mode
-                                \s*           # whitespace
-                                (&quot;[a-zA-Z0-9\:\_\- \.]+&quot;)
+                            (?x:                                          # turn on extended mode
+                                \s*                                       # whitespace
+                                (                                         # Capture block
+                                    (?:&quot;[a-zA-Z0-9\:\_\- \.]+&quot;) # quoted string
+                                    |                                     # or
+                                    (?:[a-zA-Z0-9\:\_\-]+)                # Normal-ish name with dashes
+                                )
                                 [ \t]*                               # some amount of non-linebreak whitespace
                                 (\=) # equals sign
+                                (?![\=]) # and not a second equals
                             )
                             </expression>
                             <capture number="1" name="hcl.identifier.property" />
@@ -512,6 +519,9 @@
                 <subscopes>
                     <include syntax="self" collection="comments" />
                     <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
+                    <include syntax="self" collection="types" />
                     <include syntax="self" collection="functions" />
                     <include syntax="self" collection="assignments" />
                     <include syntax="self" collection="inner-blocks" />
