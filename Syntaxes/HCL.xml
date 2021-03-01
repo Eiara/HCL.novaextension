@@ -146,6 +146,8 @@
                 </ends-with>
                 <subscopes>
                     <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="types" />
+                    <include syntax="self" collection="syntax" />
                     <include syntax="self" collection="strings" />
                     <include syntax="self" collection="numbers" />
                     <include syntax="self" collection="values" />
@@ -153,6 +155,7 @@
                     <include syntax="self" collection="functions" />
                     <include syntax="self" collection="inner-blocks" />
                     <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="expressions" />
                 </subscopes>
             </scope>
             <scope name="hcl.block.resource.definition">
@@ -388,7 +391,7 @@
                     <capture number="3" name="hcl.identifier.argument.name" />
                 </starts-with>
                 <ends-with>
-                    <expression>(?=[\}\s\n\]\):,])</expression>
+                    <expression>(?=[\}\s\n\]\):, ])</expression>
                 </ends-with>
                 <subscopes>
                     <cut-off>
@@ -399,7 +402,7 @@
                             Fortunately putting whitespace into the [] pair, if we match it,
                             doesn't match this, which is great!
                         -->
-                        <expression>(?=[\}\s\n\]\):,])</expression>
+                        <expression>(?=[\}\s\n\]\):, ])</expression>
                     </cut-off>
                     <scope name="hcl.reference.lookup">
                         <starts-with>
@@ -693,8 +696,21 @@
                 </subscopes>
             </scope>
             <!-- <scope name="hcl.expression.ternary">
-                <expression>(?:\s*).+(\?).+(\:).*</expression>
+            
+                <expression>(?:\s*).+(\?).+(\:).+</expression>
+                <capture number="1" name="hcl.operator" />
+                <capture number="2" name="hcl.operator" />
                 <subscopes>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="types" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
+                    <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="functions" />
+                    <include syntax="self" collection="inner-blocks" />
+                    <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="expressions" />
                 </subscopes>
             </scope> -->
         </collection>
@@ -721,8 +737,8 @@
                 </subscopes>
             </scope>
             <scope name="hcl.operators">
-                <expression>(\+|\-|\*|/|%|\=\=|!\=|\&lt;|\&gt;|\&lt;\=|\&gt;\=|&amp;&amp;|\|\|)</expression>
-                
+                <expression>(\+|\-|\*|/|%|\=\=|!\=|\&lt;|\&gt;|\&lt;\=|\&gt;\=|&amp;&amp;|\|\||\?|:)</expression>
+                <capture number="0" name="hcl.operator" />
             </scope>
         </collection>
     </collections>
