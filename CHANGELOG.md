@@ -1,3 +1,21 @@
+## 0.1.10
+
+- Add syntactic elements to `if` statements
+- Add syntactic elements to `for-in` statements
+- JSON HEREDOCs to use the JSON parser
+- Add `values` parsing to maps
+- Rename interpolations to `string-template`, for better - highlighting support
+- Rename functions to `built-in`, for better highlighting support
+- Add numbers, values, and comments to function calls
+- Use `type` instead of `argument` for Terraform
+-   provider blocks
+- Use `definition.type` instead of `block` for Terraform
+-   output blocks
+- Improve handling of output block names
+- Use `definition.type` for Terraform resource blocks
+- Use `type.name` for resource block names
+- Initial `for-in` completion
+
 ## 0.1.9
 
 - Improves rendering of ternary operators
