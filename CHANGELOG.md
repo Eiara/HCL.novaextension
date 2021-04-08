@@ -1,3 +1,7 @@
+## 0.1.11
+
+- Add function rendering to maps
+
 ## 0.1.10
 
 - Add syntactic elements to `if` statements
