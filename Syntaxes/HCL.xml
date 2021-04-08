@@ -269,7 +269,7 @@
             <scope name="hcl.identifier.function.call">
                 <starts-with>
                     <expression>([a-zA-Z0-9]+)\s*(\()</expression>
-                    <capture number="1" name="hcl.identifier.core.function" />
+                    <capture number="1" name="hcl.identifier.core.function.built-in" />
                     <capture number="2" name="hcl.bracket.open" />
                 </starts-with>
                 <ends-with>
@@ -282,8 +282,11 @@
                         <expression>,</expression>
                     </scope>
                     <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
                     <include syntax="self" collection="types" />
                     <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="comments" />
                 </subscopes>
             </scope>
         </collection>
@@ -311,7 +314,7 @@
         
         <!-- For handling for in-string variable interpolation -->
         <collection name="interpolations">
-            <scope name="hcl.interpolation">
+            <scope name="hcl.interpolation.string-template">
                 <starts-with>
                     <expression>\$[\$]{0,1}\{</expression>
                     <capture number="0" name="hcl.bracket.curly.open" />
@@ -452,6 +455,7 @@
                 <subscopes>
                     <include syntax="self" collection="heredoc" />
                     <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="values" />
                     <include syntax="self" collection="numbers" />
                     <include syntax="self" collection="strings" />
                     <include syntax="self" collection="expressions" />
@@ -581,7 +585,7 @@
                     <capture number="0" name="hcl.operator.heredoc.end" />
                 </ends-with>
                 <subscopes>
-                    <include syntax="yaml" collection="*" />
+                    <include syntax="json" collection="*" />
                 </subscopes>
             </scope>
             <scope name="hcl.block.heredoc.json.indented">
@@ -673,11 +677,12 @@
                 </starts-with>
                 <ends-with>
                     <expression>:</expression>
-                    <capture number="0" name="hcl.colon" />
+                    <capture number="0" name="hcl.operator.colon" />
                 </ends-with>
                 <subscopes>
                     <include syntax="self" collection="types" />
                     <include syntax="self" collection="functions" />
+                    <include syntax="self" collection="syntax" />
                 </subscopes>
             </scope>
             <scope name="hcl.expression.for-in.object.value">
@@ -734,6 +739,7 @@
                     </cut-off>
                     <include syntax="self" collection="types" />
                     <include syntax="self" collection="functions" />
+                    <include syntax="self" collection="syntax" />
                 </subscopes>
             </scope>
             <scope name="hcl.operators">
