@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<completions>
+    <provider name="terraform.for.map">
+        <syntax>terraform</syntax>
+        <selector>hcl.map</selector>
+        <expression>\bfor</expression>
+        <set>terraform.for.map</set>
+    </provider>
+    <!-- <provider name="terraform.for.array">
+        <syntax>terraform</syntax>
+        <selector>hcl.array</selector>
+        <expression>\b[a-zA-Z0-9-_]*</expression>
+        <set>mylang.entities</set>
+    </provider> -->
+    <!-- Entities -->
+    <set name="terraform.for.map">
+        <completion string="for $[name] in $[value]: " />
+        <completion string="&amp;" />
+        <completion string="&apos;" />
+        <completion string="&lt;" />
+        <completion string="&gt;" />
+    </set>
+</completions>
