@@ -1,3 +1,9 @@
+## 0.1.12
+
+- Improve YAML sublanguage parsing support in HEREDOC statements
+- Adds variable dotted types to Packer HCL
+- Adds dotted types to resource definitions
+
 ## 0.1.11
 
 - Add function rendering to maps

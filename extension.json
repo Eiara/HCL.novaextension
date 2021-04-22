@@ -3,7 +3,7 @@
     "name": "HCL",
     "organization": "Eiara Limited",
     "description": "Language support for Hashicorp's Terraform and Packer",
-    "version": "0.1.11",
+    "version": "0.1.12",
     "categories": ["languages","clips"],
     "keywords": ["terraform", "packer"],
     "activationEvents": [
