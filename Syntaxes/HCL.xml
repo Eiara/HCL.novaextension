@@ -386,7 +386,7 @@
                     <expression>
                         (?x:                            # extended mode, allows arbitrary whitespace
                         ([a-z][a-zA_0-9]+)              # The first value is going to be the resource type
-                        (\.)([a-zA-Z][a-zA-Z\-_0-9]+)   # the second is going to be the name
+                        (\.)([a-zA-Z][a-zA-Z\-_0-9]*)   # the second is going to be the name
                                                         # Everything after is going to be the sub-items as normal
                         )
                     </expression>

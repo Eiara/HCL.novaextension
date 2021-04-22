@@ -1,3 +1,7 @@
+## 0.1.13
+
+- Support single-character resource names
+
 ## 0.1.12
 
 - Improve YAML sublanguage parsing support in HEREDOC statements
