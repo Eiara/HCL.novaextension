@@ -83,9 +83,12 @@
                 <subscopes>
                     <include syntax="hcl" collection="strings" />
                     <include syntax="hcl" collection="numbers" />
+                    <include syntax="hcl" collection="types" />
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
                     <include syntax="hcl" collection="inner-blocks" />
+                    
+                    
                 </subscopes>
             </scope>
         </collection>

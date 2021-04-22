@@ -181,6 +181,7 @@
                     <include syntax="self" collection="assignments" />
                     <include syntax="self" collection="objects" />
                     <include syntax="self" collection="inner-blocks" />
+                    <include syntax="self" collection="types" />
                 </subscopes>
             </scope>
         </collection>
@@ -549,12 +550,14 @@
                 </starts-with>
                 <ends-with>
                 <!-- Beginning of line -->
-                    <expression>^YAML</expression>
+                    <expression>^YAML$</expression>
                     <capture number="0" name="hcl.operator.heredoc.end" />
                 </ends-with>
-                <subscopes>
-                    <include syntax="yaml" collection="*" />
-                </subscopes>
+                <subsyntax name="yaml">
+                    <cut-off>
+                        <expression>(?=^YAML)</expression>
+                    </cut-off>
+                </subsyntax>
             </scope>
             <scope name="hcl.block.heredoc.yaml.indented">
                 <starts-with>
@@ -568,9 +571,11 @@
                     <expression>\s+YAML</expression>
                     <capture number="0" name="hcl.operator.heredoc.end" />
                 </ends-with>
-                <subscopes>
-                    <include syntax="yaml" collection="*" />
-                </subscopes>
+                <subsyntax name="yaml">
+                    <cut-off>
+                        <expression>(?=^\s+YAML)</expression>
+                    </cut-off>
+                </subsyntax>
             </scope>
             <scope name="hcl.block.heredoc.json.normal">
                 <symbol type="block">"                    
@@ -585,9 +590,11 @@
                     <expression>^JSON</expression>
                     <capture number="0" name="hcl.operator.heredoc.end" />
                 </ends-with>
-                <subscopes>
-                    <include syntax="json" collection="*" />
-                </subscopes>
+                <subsyntax name="json">
+                    <cut-off>
+                        <expression>(?=^JSON)</expression>
+                    </cut-off>
+                </subsyntax>
             </scope>
             <scope name="hcl.block.heredoc.json.indented">
                 <starts-with>
