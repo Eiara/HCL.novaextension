@@ -1,3 +1,10 @@
+## 0.1.14
+
+- Support `_name` names for locals and variables
+- Terraform `provider` blocks now support dotted references
+- `map` and `list` variable Clips now use correct syntax of `map(type)`
+- `if` statements can now correctly include strings
+
 ## 0.1.13
 
 - Support single-character resource names
@@ -87,4 +94,3 @@ Adds:
  - assignments
  - Some keywords
  - Functions
- 

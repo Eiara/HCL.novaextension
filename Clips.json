@@ -10,7 +10,7 @@
           "trigger" : "var"
         },
         {
-          "content" : "variable \"${:name}\" {\n  type = map\n  description = \"${:description}\"\n  default = {\n    \n  }\n}",
+          "content" : "variable \"${:name}\" {\n  type = map(${:type})\n  description = \"${:description}\"\n  default = {\n    \n  }\n}",
           "name" : "variable.map",
           "scope" : "editor",
           "syntax" : "terraform",
@@ -24,7 +24,7 @@
           "trigger" : "varo"
         },
         {
-          "content" : "variable \"${:name}\" {\n  type = list\n  description = \"${:description}\"\n  default = [\n    \n  ]\n}",
+          "content" : "variable \"${:name}\" {\n  type = list(${:type})\n  description = \"${:description}\"\n  default = [\n    \n  ]\n}",
           "name" : "variable.list",
           "scope" : "editor",
           "syntax" : "terraform",

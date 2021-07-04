@@ -229,6 +229,7 @@
                     <include syntax="hcl" collection="numbers" />
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
+                    <include syntax="hcl" collection="types" />
                     <include syntax="self" collection="syntax" />
                     <include syntax="hcl" collection="inner-blocks" />
                 </subscopes>

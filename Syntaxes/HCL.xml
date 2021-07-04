@@ -4,19 +4,19 @@
         <name>HCL</name>
         <type>structured</type>
     </meta>
-    
+
     <!-- What does this even do? -->
     <symbols redefinition="within-construct">
         <local scope="within-construct" />
     </symbols>
-    
+
     <collections>
         <collection name="comments">
             <scope name="hcl.comment.single" spell-check="true">
                 <expression>\#.*$</expression>
             </scope>
             <scope name="hcl.comment.block" spell-check="true">
-                
+
                 <starts-with>
                     <expression>\/\*</expression>
                 </starts-with>
@@ -74,7 +74,7 @@
 			             )?         # make decimal portion optional
                    (
                      [kKmMgG]b? # Do we have a trailing suffix?
-                   )?         # 
+                   )?         #
                    \b
 			           )
                 </expression>
@@ -100,6 +100,7 @@
                     <string>any</string>
                     <string>string</string>
                     <string>number</string>
+                    <string>bool</string>
                 </strings>
             </scope>
         </collection>
@@ -159,7 +160,7 @@
                 </subscopes>
             </scope>
             <scope name="hcl.block.resource.definition">
-                <symbol type="block">"                    
+                <symbol type="block">"
                     <!-- <context behavior="subtree" group="variables" foldable="true" /> -->
                 </symbol>
                 <starts-with>
@@ -278,7 +279,7 @@
                     <capture number="0" name="hcl.bracket.close" />
                 </ends-with>
                 <subscopes>
-                
+
                     <scope name="hcl.operator.separator">
                         <expression>,</expression>
                     </scope>
@@ -305,14 +306,14 @@
                     (?![&gt;\=]) # negative lookahead
                 )
                 </expression>
-                
+
                 <capture number="1" name="hcl.identifier.property" />
                 <capture number="2" name="hcl.operator" />
             </scope>
         </collection>
         <!-- the if/for/foreach stuff features in HCL2 -->
 
-        
+
         <!-- For handling for in-string variable interpolation -->
         <collection name="interpolations">
             <scope name="hcl.interpolation.string-template">
@@ -333,7 +334,7 @@
         </collection>
         <!-- Handles arrays, maps, and normal dotted expressions -->
         <collection name="types">
-            <!-- 
+            <!--
                 Dotted expressions.
                 Specifically creating expressions for the various major types
                 to capture that var. and local. are special
@@ -343,7 +344,7 @@
                     <expression>
                         (?x:                                # turn on extended mode, allows arbitrary whitespace
                             (var|local)(\.)                 # First match is always a variable or local declaration
-                            ([a-zA-Z][a-zA-Z\-_0-9]+)       # variable names always start with a letter
+                            ((?:_)?[a-zA-Z][a-zA-Z\-_0-9]+)       # variable names always start with a letter
                         )
                     </expression>
                     <capture number="1" name="hcl.keyword" />
@@ -482,12 +483,12 @@
                             <capture number="1" name="hcl.identifier.property" />
                             <capture number="2" name="hcl.operator" />
                     </scope>
-                    
+
                 </subscopes>
             </scope>
             <scope name="hcl.array">
-                <symbol type="list">
-                    <context behavior="subtree" />
+                <symbol type="block">
+                    <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
                     <expression>\[</expression>
@@ -512,7 +513,7 @@
         </collection>
         <collection name="inner-blocks">
             <scope name="hcl.block.inner">
-                <symbol type="block">"                    
+                <symbol type="block">"
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
@@ -541,7 +542,7 @@
         </collection>
         <collection name="heredoc">
             <scope name="hcl.block.heredoc.yaml.normal">
-                <symbol type="block">"                    
+                <symbol type="block">"
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
@@ -565,7 +566,7 @@
                     <capture number="0" name="hcl.operator.heredoc.start" />
                 </starts-with>
                 <ends-with>
-                    <!-- This is a bit of a hack tbh, since we're not enforcing how many 
+                    <!-- This is a bit of a hack tbh, since we're not enforcing how many
                          indents are appropriate for the heredoc
                     -->
                     <expression>\s+YAML</expression>
@@ -578,7 +579,7 @@
                 </subsyntax>
             </scope>
             <scope name="hcl.block.heredoc.json.normal">
-                <symbol type="block">"                    
+                <symbol type="block">"
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
@@ -602,7 +603,7 @@
                     <capture number="0" name="hcl.operator.heredoc.start" />
                 </starts-with>
                 <ends-with>
-                        <!-- This is a bit of a hack tbh, since we're not enforcing how many 
+                        <!-- This is a bit of a hack tbh, since we're not enforcing how many
                         indents are appropriate for the heredoc
                     -->
                     <expression>\s+JSON</expression>
@@ -613,7 +614,7 @@
                 </subscopes>
             </scope>
             <scope name="hcl.block.heredoc.shell.normal">
-                <symbol type="block">"                    
+                <symbol type="block">"
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
@@ -635,7 +636,7 @@
                     <capture number="0" name="hcl.operator.heredoc.start" />
                 </starts-with>
                 <ends-with>
-                    <!-- This is a bit of a hack tbh, since we're not enforcing how many 
+                    <!-- This is a bit of a hack tbh, since we're not enforcing how many
                     indents are appropriate for the heredoc
                 -->
                     <template>\2</template>
@@ -646,7 +647,7 @@
                 </subscopes>
             </scope>
             <scope name="hcl.block.heredoc.generic.normal">
-                <symbol type="block">"                    
+                <symbol type="block">"
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
@@ -665,7 +666,7 @@
                     <capture number="0" name="hcl.operator.heredoc.start" />
                 </starts-with>
                 <ends-with>
-                    <!-- This is a bit of a hack tbh, since we're not enforcing how many 
+                    <!-- This is a bit of a hack tbh, since we're not enforcing how many
                     indents are appropriate for the heredoc
                     -->
                     <template>\2</template>
@@ -709,7 +710,7 @@
                 </subscopes>
             </scope>
             <!-- <scope name="hcl.expression.ternary">
-            
+
                 <expression>(?:\s*).+(\?).+(\:).+</expression>
                 <capture number="1" name="hcl.operator" />
                 <capture number="2" name="hcl.operator" />
@@ -748,6 +749,7 @@
                     <include syntax="self" collection="types" />
                     <include syntax="self" collection="functions" />
                     <include syntax="self" collection="syntax" />
+                    <include syntax="self" collection="strings" />
                 </subscopes>
             </scope>
             <scope name="hcl.operators">
