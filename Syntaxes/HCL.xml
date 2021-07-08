@@ -146,6 +146,7 @@
                     <capture number="1" name="hcl.bracket.curly.close" />
                 </ends-with>
                 <subscopes>
+                    <include syntax="self" collection="heredoc" />
                     <include syntax="self" collection="comments" />
                     <include syntax="self" collection="types" />
                     <include syntax="self" collection="syntax" />

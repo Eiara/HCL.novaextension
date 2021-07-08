@@ -1,3 +1,7 @@
+## 0.1.15
+
+- Support HEREDOCs in `locals` declaration blocks
+
 ## 0.1.14
 
 - Support `_name` names for locals and variables
