@@ -1,3 +1,7 @@
+## 0.1.17
+
+- Merge patch `show terrform errors on failure to format`
+
 ## 0.1.16
 
 - Improve Packer rendering

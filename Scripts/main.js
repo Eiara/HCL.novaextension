@@ -87,11 +87,11 @@ function findTerraformBinary() {
 
 // This was originally written such that terraform fmt overwrote the file contents directly but
 // Nova had a several second delay before updating the UI.  To get around this, the fmt command
-// outputs to stdout, read into a temporary string and upon process exit a replace edit operation 
+// outputs to stdout, read into a temporary string and upon process exit a replace edit operation
 // overwrites the existing file with the new contents.
 function format(editor) {
 	var options = {
-		args: ["fmt", "-write=false", "-list=false", editor.document.path]
+		args: ["fmt", "-no-color", "-write=false", "-list=false", editor.document.path]
 	};
 
 	if (formatterBinPath == null) {
@@ -104,19 +104,34 @@ function format(editor) {
 	var process = new Process(formatterBinPath, options);
 	process.start();
 	var finalText = "";
+	var errorText = "";
 	process.onStdout((result) => {
 		finalText += result;
-
 	})
-	process.onDidExit(() => {
-		editor.edit((edit) => {
-			edit.replace(new Range(0,editor.document.length),finalText);
-		});
+	process.onStderr((result) => {
+		errorText += result;
+	})
+	process.onDidExit((status) => {
+		if (status == 0) {
+			editor.edit((edit) => {
+				edit.replace(new Range(0, editor.document.length), finalText);
+			});
+		} else {
+			var request = new NotificationRequest("terraform-fmt-error");
+			request.title = nova.localize("Terraform Format Error");
+			request.body = nova.localize(errorText);
+			nova.notifications.add(request);
+			return;
+		}
 	});
 }
 
 function configureFormatOnSave() {
 	return nova.workspace.activeTextEditor.onWillSave((editor) => {
+		if (editor.document.syntax !== "terraform") {
+			// don't format-on-save unless it's terraform
+			return;
+		}
 		format(editor, formatterBinPath);
 	});
 }
