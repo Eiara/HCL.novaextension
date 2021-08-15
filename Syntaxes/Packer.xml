@@ -6,23 +6,28 @@
         <preferred-file-extension>tf</preferred-file-extension>
         <parent>hcl</parent>
     </meta>
-    
+
     <detectors>
         <extension priority="1.0">pkr.hcl</extension>
     </detectors>
-    
-    <indentation>
 
-    </indentation>
-    
+<indentation>
+    <increase>
+        <expression>(\{[^}\"]*$)|(\[[^\]\"]*$)|(\([^)\"]*$)</expression>
+    </increase>
+    <decrease>
+        <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
+    </decrease>
+</indentation>
+
     <comments>
         <single>
-            <!-- 
+            <!--
                 While Terraform does support // that's considered less than ideal
-            -->            
+            -->
             <expression>#</expression>
         </single>
-        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->        
+        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->
         <multiline>
             <starts-with>
                 <expression>/*</expression>
@@ -32,27 +37,27 @@
             </ends-with>
         </multiline>
     </comments>
-    
+
     <brackets>
         <pair open="{" close="}" />
         <pair open="[" close="]" />
         <pair open="(" close=")" />
     </brackets>
-    
+
     <surrounding-pairs>
         <pair open="{" close="}" />
         <pair open="[" close="]" />
         <pair open="(" close=")" />
         <pair open="&quot;" close="&quot;" />
     </surrounding-pairs>
-    
+
     <scopes>
         <include syntax="hcl" collection="comments" />
         <include syntax="hcl" collection="blocks" />
-        
+
         <include syntax="self" collection="blocks" />
     </scopes>
-    
+
     <collections>
         <!-- Unused/present for future use -->
         <!-- <collection name="functions">
@@ -67,8 +72,33 @@
         </collection> -->
         <collection name="blocks">
             <!-- top-level resource -->
+            <scope name="packer.configuration">
+                <symbol type="block">
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(packer)\s+(\{)</expression>
+                    <capture number="1" name="packer.keyword" />
+                    <capture number="2" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="hcl" collection="strings" />
+                    <include syntax="hcl" collection="numbers" />
+                    <include syntax="hcl" collection="types" />
+                    <include syntax="hcl" collection="values" />
+                    <include syntax="hcl" collection="assignments" />
+                    <include syntax="hcl" collection="inner-blocks" />
+                    <include syntax="hcl" collection="comments" />
+
+
+                </subscopes>
+            </scope>
             <scope name="packer.resource.build">
-                <symbol type="block">"                    
+                <symbol type="block">"
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
@@ -87,8 +117,9 @@
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
                     <include syntax="hcl" collection="inner-blocks" />
-                    
-                    
+                    <include syntax="hcl" collection="comments" />
+
+
                 </subscopes>
             </scope>
         </collection>

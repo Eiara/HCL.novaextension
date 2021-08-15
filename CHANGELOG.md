@@ -1,3 +1,8 @@
+## 0.1.16
+
+- Improve Packer rendering
+- Fix indentation on Packer
+
 ## 0.1.15
 
 - Support HEREDOCs in `locals` declaration blocks
