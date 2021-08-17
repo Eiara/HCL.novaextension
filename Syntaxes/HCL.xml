@@ -679,7 +679,16 @@
             <scope name="hcl.expression.for-in.object">
                 <starts-with>
                     <expression>
-                    (?:\s*)(for)\s+([a-zA-Z][a-zA-Z0-9\_\-]+)\s+(in)\s+
+                    (?x:            # turn on extended mode
+                        (?:\s*)     # optional whitespace
+                        (for)\s+    # for keyword with at least one space
+                        (
+                            (?:[a-zA-Z][a-zA-Z0-9\_\-]+) # single identifier
+                            (?:\s*,\s*[a-zA-Z][a-zA-Z0-9\_\-]+) # subsequent identifiers
+                        )
+                        \s+ # at least one space
+                        (in)\s+ # in keyword with at least one trailing space
+                    )
                     </expression>
                     <capture number="1" name="hcl.keyword" />
                     <capture number="2" name="hcl.identifier.generic" />
