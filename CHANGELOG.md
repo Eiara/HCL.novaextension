@@ -1,3 +1,7 @@
+## 0.1.19
+
+- Fixes rendering bug with `for ... in` using single-character variable names
+
 ## 0.1.18
 
 - Adds complex identifiers to for-in statements, such as `for one, two in`
