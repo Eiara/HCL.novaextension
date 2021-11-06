@@ -86,12 +86,32 @@ function findTerraformBinary() {
 }
 
 // This was originally written such that terraform fmt overwrote the file contents directly but
-// Nova had a several second delay before updating the UI.  To get around this, the fmt command
-// outputs to stdout, read into a temporary string and upon process exit a replace edit operation
-// overwrites the existing file with the new contents.
+// Nova had a several second delay before updating the UI. Instead, this passes the document's
+// contents via STDIN and reads the formatted text from STDOUT. Formatting code is wrapped in a
+// Promise so that Nova will wait for this Promise to resolve (or reject) before fully writing the file
+// to disk.
 function format(editor) {
+	const documentSpan = new Range(0, editor.document.length);
+  const documentText = editor.document.getTextInRange(documentSpan);
+	return process(documentText)
+    .then((finalText) => {
+			editor.edit((edit) => {
+				edit.replace(new Range(0, editor.document.length), finalText);
+			});
+		})
+    .catch((errorText) => {
+			var request = new NotificationRequest("terraform-fmt-error");
+			request.title = nova.localize("Terraform Format Error");
+			request.body = nova.localize(errorText);
+			nova.notifications.add(request);
+			return;
+		});
+}
+
+function process(inputText) {
 	var options = {
-		args: ["fmt", "-no-color", "-write=false", "-list=false", editor.document.path]
+		args: ["fmt", "-no-color", "-"],
+		stdio: "pipe",
 	};
 
 	if (formatterBinPath == null) {
@@ -101,29 +121,34 @@ function format(editor) {
 		nova.notifications.add(request);
 		return;
 	}
-	var process = new Process(formatterBinPath, options);
-	process.start();
-	var finalText = "";
-	var errorText = "";
-	process.onStdout((result) => {
-		finalText += result;
-	})
-	process.onStderr((result) => {
-		errorText += result;
-	})
-	process.onDidExit((status) => {
-		if (status == 0) {
-			editor.edit((edit) => {
-				edit.replace(new Range(0, editor.document.length), finalText);
+	return new Promise((resolve, reject) => {
+		try {
+			var process = new Process(formatterBinPath, options);
+			const writer = process.stdin.getWriter();
+	    writer.ready.then(() => {
+	      writer.write(inputText);
+	      writer.close();
+	    });
+			var finalText = "";
+			var errorText = "";
+			process.onStdout((result) => {
+				finalText += result;
+			})
+			process.onStderr((result) => {
+				errorText += result;
+			})
+			process.onDidExit((status) => {
+				if (status == 0) {
+					resolve(finalText);
+				} else {
+					reject(errorText)
+				}
 			});
-		} else {
-			var request = new NotificationRequest("terraform-fmt-error");
-			request.title = nova.localize("Terraform Format Error");
-			request.body = nova.localize(errorText);
-			nova.notifications.add(request);
-			return;
+			process.start();
+		} catch (err) {
+			reject(err);
 		}
-	});
+	})
 }
 
 function configureFormatOnSave() {
@@ -132,6 +157,6 @@ function configureFormatOnSave() {
 			// don't format-on-save unless it's terraform
 			return;
 		}
-		format(editor, formatterBinPath);
+		return format(editor, formatterBinPath);
 	});
 }
