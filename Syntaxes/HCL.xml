@@ -1,9 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<syntax name="hcl" subsyntax="true">
+<syntax name="hcl">
     <meta>
         <name>HCL</name>
         <type>structured</type>
+        <preferred-file-extension>hcl</preferred-file-extension>
     </meta>
+    <detectors>
+        <extension>hcl</extension>
+    </detectors>
+
+    <indentation>
+        <increase>
+            <expression>(\{[^}\"]*$)|(\[[^\]\"]*$)|(\([^)\"]*$)</expression>
+        </increase>
+        <decrease>
+            <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
+        </decrease>
+    </indentation>
+
+    <comments>
+        <single>
+            <!--
+                While HCL does support // that's considered less than ideal
+            -->
+            <expression>#</expression>
+        </single>
+        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->
+        <multiline>
+            <starts-with>
+                <expression>/*</expression>
+            </starts-with>
+            <ends-with>
+                <expression>*/</expression>
+            </ends-with>
+        </multiline>
+    </comments>
+
+    <brackets>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+    </brackets>
+
+    <surrounding-pairs>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+        <pair open="&quot;" close="&quot;" />
+    </surrounding-pairs>
+
+    <scopes>
+        <include syntax="self" collection="blocks" />
+        <include syntax="self" collection="strings" />
+        <include syntax="self" collection="numbers" />
+        <include syntax="self" collection="types" />
+        <include syntax="self" collection="values" />
+        <include syntax="self" collection="assignments" />
+        <include syntax="self" collection="comments" />
+        <include syntax="self" collection="objects" />
+        <include syntax="self" collection="heredoc" />
+    </scopes>
 
     <!-- What does this even do? -->
     <symbols redefinition="within-construct">
@@ -47,11 +103,17 @@
                     <expression>&quot;</expression>
                 </starts-with>
                 <ends-with>
-                    <expression>&quot;</expression>
+                    <expression>&quot;|(?:(?&lt;!\\)$)</expression>
                 </ends-with>
                 <subscopes>
+                    <include syntax="self" collection="string-escapes" />
                     <include syntax="self" collection="interpolations" />
                 </subscopes>
+            </scope>
+        </collection>
+        <collection name="string-escapes">
+            <scope name="hcl.string.double-quoted.escape">
+                <expression>(?:\\(&quot;|n|r|t|\\|u[\d]{4}|U[\d]{8}))</expression>
             </scope>
         </collection>
         <collection name="numbers">
@@ -160,9 +222,34 @@
                     <include syntax="self" collection="expressions" />
                 </subscopes>
             </scope>
+            <scope name="hcl.block.provider">
+                <symbol type="block">
+                    <context behavior="subtree" fold-type="function" />
+                </symbol>
+                <starts-with>
+                    <expression>(provider)\s+("[a-zA-Z][a-zA-Z0-9\_\-\./]*")\s+(\{)</expression>
+                    <capture number="1" name="hcl.keyword" />
+                    <capture number="2" name="hcl.identifier.type.name" />
+                    <capture number="3" name="hcl.bracket.curly.open" />
+                </starts-with>
+                <ends-with>
+                    <expression>(\})</expression>
+                    <capture number="1" name="hcl.bracket.curly.close" />
+                </ends-with>
+                <subscopes>
+                    <include syntax="self" collection="comments" />
+                    <include syntax="self" collection="strings" />
+                    <include syntax="self" collection="numbers" />
+                    <include syntax="self" collection="values" />
+                    <include syntax="self" collection="assignments" />
+                    <include syntax="self" collection="objects" />
+                    <include syntax="self" collection="inner-blocks" />
+                    <include syntax="self" collection="types" />
+                </subscopes>
+            </scope>
             <scope name="hcl.block.resource.definition">
-                <symbol type="block">"
-                    <!-- <context behavior="subtree" group="variables" foldable="true" /> -->
+                <symbol type="block">
+                    <context behavior="subtree" foldable="true" fold-type="function" />
                 </symbol>
                 <starts-with>
                     <expression>([a-z][a-zA-Z0-9\-_]+)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
@@ -480,11 +567,10 @@
                                 (\=) # equals sign
                                 (?![\=]) # and not a second equals
                             )
-                            </expression>
-                            <capture number="1" name="hcl.identifier.property" />
-                            <capture number="2" name="hcl.operator" />
+                        </expression>
+                        <capture number="1" name="hcl.identifier.property" />
+                        <capture number="2" name="hcl.operator" />
                     </scope>
-
                 </subscopes>
             </scope>
             <scope name="hcl.array">
@@ -648,7 +734,7 @@
                 </subscopes>
             </scope>
             <scope name="hcl.block.heredoc.generic.normal">
-                <symbol type="block">"
+                <symbol type="block">
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>

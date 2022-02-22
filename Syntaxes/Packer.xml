@@ -3,7 +3,7 @@
     <meta>
         <name>Packer</name>
         <type>structured</type>
-        <preferred-file-extension>tf</preferred-file-extension>
+        <preferred-file-extension>pkr.hcl</preferred-file-extension>
         <parent>hcl</parent>
     </meta>
 
@@ -23,7 +23,7 @@
     <comments>
         <single>
             <!--
-                While Terraform does support // that's considered less than ideal
+                While HCL does support // that's considered less than ideal
             -->
             <expression>#</expression>
         </single>

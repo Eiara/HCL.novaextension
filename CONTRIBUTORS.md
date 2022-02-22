@@ -3,3 +3,4 @@
 - Aurynn Shaw (@aurynn)
 - Robert Lippens (@Lucretius)
 - Min RK (@minrk)
+- Edward Loveall (@edwardloveall)

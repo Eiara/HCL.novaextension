@@ -4,13 +4,13 @@
         <name>Terraform</name>
         <type>structured</type>
         <preferred-file-extension>tf</preferred-file-extension>
-        <!-- <parent>hcl</parent> -->
+        <parent>hcl</parent>
     </meta>
-    
+
     <detectors>
         <extension priority="1.0">tf</extension>
     </detectors>
-    
+
     <indentation>
         <increase>
             <expression>(\{[^}\"]*$)|(\[[^\]\"]*$)|(\([^)\"]*$)</expression>
@@ -19,15 +19,15 @@
             <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
         </decrease>
     </indentation>
-    
+
     <comments>
         <single>
-                <!-- 
+                <!--
                     While Terraform does support // that's considered less than ideal
-                -->            
+                -->
             <expression>#</expression>
         </single>
-        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->        
+        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->
         <multiline>
             <starts-with>
                 <expression>\/\*</expression>
@@ -37,13 +37,13 @@
             </ends-with>
         </multiline>
     </comments>
-    
+
     <brackets>
         <pair open="{" close="}" />
         <pair open="[" close="]" />
         <pair open="(" close=")" />
     </brackets>
-    
+
     <surrounding-pairs>
         <pair open="{" close="}" />
         <pair open="[" close="]" />
@@ -51,29 +51,29 @@
         <pair open="&apos;" close="&apos;" />
         <pair open="&quot;" close="&quot;" />
     </surrounding-pairs>
-    
+
     <scopes>
-        
+
         <!-- <include syntax="self" collection="functions" /> -->
-        <!-- 
-            Pulls in comments and the overlapping function definitions 
+        <!--
+            Pulls in comments and the overlapping function definitions
         -->
         <include syntax="hcl" collection="comments" />
-        
+
 
         <!-- Our specific block types -->
-        
+
         <!-- Generic HCL block types -->
         <include syntax="self" collection="blocks" />
         <include syntax="hcl" collection="blocks" />
-        
+
         <include syntax="self" collection="keywords" />
         <include syntax="self" collection="identifiers" />
 
     </scopes>
-    
+
     <collections>
-        
+
         <!-- Unused/present for future use -->
         <collection name="functions">
             <scope name="terraform.identifier.core.function.extension" suffix="(?=\()">
@@ -108,7 +108,7 @@
                 </strings>
             </scope>
         </collection>
-        
+
         <collection name="identifiers">
             <scope name="terraform.identifier.core.type">
                 <strings prefix="(?&lt;!\.)" suffix="(?!\()">
@@ -120,7 +120,7 @@
                 </strings>
             </scope>
         </collection>
-        
+
         <collection name="blocks">
         <!-- top-level resource -->
         <scope name="terraform.block.global">
@@ -146,7 +146,7 @@
             </subscopes>
         </scope>
             <scope name="terraform.resource.definition.type">
-                <symbol type="constructor">"                    
+                <symbol type="constructor">"
                     <context behavior="subtree" fold-type="function" />
                     <display-name>
                         <component selector="identifier.type" append="." replace="&quot;" replace-with="" />
@@ -204,7 +204,7 @@
                     <include syntax="hcl" collection="values" />
                     <include syntax="hcl" collection="assignments" />
                     <include syntax="hcl" collection="functions" />
-                    
+
                     <include syntax="hcl" collection="objects" />
                     <include syntax="hcl" collection="comments" />
                 </subscopes>
@@ -214,7 +214,7 @@
                     <context behavior="subtree" fold-type="function" />
                 </symbol>
                 <starts-with>
-                    <expression>(provider)\s+("[a-zA-Z][a-zA-Z0-9\_\-]*")\s+(\{)</expression>
+                    <expression>(provider)\s+("[a-zA-Z][a-zA-Z0-9\_\-\./]*")\s+(\{)</expression>
                     <capture number="1" name="hcl.keyword" />
                     <capture number="2" name="hcl.identifier.type.name" />
                     <capture number="3" name="hcl.bracket.curly.open" />
@@ -236,7 +236,7 @@
             </scope>
         </collection>
         <collection name="assignments">
-            <!-- 
+            <!--
                 As far as I can tell, there's no way to modify the parent definitions,
                 so,
                 redefine it and add our own specific function override
@@ -249,7 +249,7 @@
                 </starts-with>
                 <ends-with>
                     <!--
-                        End the assignment at EOL 
+                        End the assignment at EOL
                         TODO: there may be a better way of doing this?
                     -->
                     <expression>$</expression>

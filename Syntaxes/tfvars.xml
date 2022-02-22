@@ -4,7 +4,7 @@
         <type>structured</type>
         <preferred-file-extension>tfvars</preferred-file-extension>
     </meta>
-    
+
     <detectors>
         <extension priority="1.0">tfvars</extension>
     </detectors>
@@ -18,12 +18,12 @@
     </indentation>
     <comments>
         <single>
-                <!-- 
+                <!--
                     While Terraform does support // that's considered less than ideal
-                -->            
+                -->
             <expression>#</expression>
         </single>
-        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->        
+        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->
         <multiline>
             <starts-with>
                 <expression>\/\*</expression>
@@ -38,7 +38,7 @@
         <pair open="[" close="]" />
         <pair open="(" close=")" />
     </brackets>
-    
+
     <surrounding-pairs>
         <pair open="{" close="}" />
         <pair open="[" close="]" />
@@ -47,9 +47,10 @@
         <pair open="&quot;" close="&quot;" />
     </surrounding-pairs>
     <scopes>
-    <include syntax="hcl" collection="comments" />
-    <include syntax="hcl" collection="objects" />
-    <include syntax="hcl" collection="assignments" />
-    <include syntax="hcl" collection="strings" />
+        <include syntax="hcl" collection="comments" />
+        <include syntax="hcl" collection="objects" />
+        <include syntax="hcl" collection="assignments" />
+        <include syntax="hcl" collection="strings" />
+        <include syntax="hcl" collection="values" />
     </scopes>
 </syntax>

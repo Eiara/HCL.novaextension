@@ -1,3 +1,11 @@
+# 0.1.20
+
+- Adds escape sequences in strings
+- Expands the number of accepted escape sequences
+- Adds HCL as a top-level syntax, for configuration files (for example, Consul)
+- Support `onWillSave()`, per #13
+- improved parsing for `provider` blocks
+
 ## 0.1.19
 
 - Fixes rendering bug with `for ... in` using single-character variable names
