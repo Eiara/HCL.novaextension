@@ -2,14 +2,14 @@
 
 Based off of [the TextMate Terraform](https://github.com/aurynn/Terraform.tmbundle) bundle (to some extent).
 
-Implements a generic HCL grammar, and uses it to power the [Terraform](https://terraform.io) and [Packer](https://packer.io)-specific grammars.
+Implements a generic HCL grammar and uses it to power the [Terraform](https://terraform.io) and [Packer](https://packer.io)-specific grammars.
 
-Includes support for `tfvars` and `pkrvars.hcl` files, using a subset grammar.
+Includes support for `tfvars` and `pkrvars.hcl` files using a subset grammar.
 
-Formatting for Terraform files is provided using your existing Terraform binary and format-on-save can be enabled, in extension preferences.
+Formatting for Terraform files is provided using your existing Terraform binary, and `Terraform Format On Save` can be enabled in the extension preferences.
 
-Eventually this will be moved to the offical Hashicorp language server.
+Eventually this will be moved to the official Hashicorp language server.
 
-This extension is NOT maintained by Hashicorp.
+This extension is __not__ maintained by Hashicorp.
 
-Extension icon by CC-BY-SA-4.0 Sethvargo, retreived from [Wikipedia](https://en.wikipedia.org/wiki/HashiCorp#/media/File:HashiCorp_Logo_no_text.png)
+Extension icon by CC-BY-SA-4.0 Sethvargo via [Wikipedia](https://en.wikipedia.org/wiki/HashiCorp#/media/File:HashiCorp_Logo_no_text.png).
