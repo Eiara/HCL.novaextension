@@ -1,3 +1,26 @@
+# 0.2.0
+
+ - Remove regex-based parser, switch to Tree-Sitter using [https://github.com/tree-sitter-grammars/tree-sitter-hcl](),
+ - Support language symbols using tree-sitter.,
+ - Fixes injected language support in heredocs, supporting (case-insensitive)
+   - `<<YAML`,
+   - `<<JSON`,
+   - `<<SHELL`, `<<BASH`, `<<SHELLCOMMANDS`,
+   - `<<TOML`,
+   - `<<MARKDOWN`, `<<MD`, `<<MDOWN`,
+ - Add initial alpha language server support using [https://github.com/hashicorp/terraform-ls](),
+   - Support currently defaults to disabled,
+ - Add settings for language server:
+   - enabled/disabled,
+   - path to binary,
+   - timeout,
+   - debugging,
+   - ignored paths,
+   - ignored directories,
+ - Update configuration system to support both global and per-project settings,
+ - Add `formatters` and `commands` to extension categories,
+ to reflect `terraform fmt` and associated commands
+
 # 0.1.20
 
 - Adds escape sequences in strings

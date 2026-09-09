@@ -1,6 +1,7 @@
-<syntax name="pkrvars">
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="packer-vars">
     <meta>
-        <name>pkrvars</name>
+        <name>packer-vars</name>
         <type>structured</type>
         <preferred-file-extension>pkrvars.hcl</preferred-file-extension>
     </meta>
@@ -18,9 +19,7 @@
     </indentation>
     <comments>
         <single>
-                <!--
-                    While Terraform does support // that's considered less than ideal
-                -->
+            <expression>\/\/</expression>
             <expression>#</expression>
         </single>
         <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->
@@ -46,10 +45,11 @@
         <pair open="&apos;" close="&apos;" />
         <pair open="&quot;" close="&quot;" />
     </surrounding-pairs>
-    <scopes>
-    <include syntax="hcl" collection="comments" />
-    <include syntax="hcl" collection="objects" />
-    <include syntax="hcl" collection="assignments" />
-    <include syntax="hcl" collection="strings" />
-    </scopes>
+    
+    <tree-sitter language="hcl">
+        <highlights path="highlights.scm" />
+        <symbols    path="symbols.scm" />
+        <folds      path="folds.scm" />
+        <injections path="injections.scm" />
+    </tree-sitter>
 </syntax>

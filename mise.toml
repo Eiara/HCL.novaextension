@@ -1,0 +1,40 @@
+# Add the necessary environment variables to build against Nova
+# Per https://docs.nova.app/syntax-reference/tree-sitter/#compiling-a-parser
+[env]
+# Build for both amd64 and arch64
+CFLAGS="-arch arm64 -arch x86_64"
+# Link for both, and link against Nova
+# LDFLAGS="-arch arm64 -arch x86_64 -F/Applications/Nova.app/Contents/Frameworks -framework SyntaxKit -rpath @loader_path/../Frameworks"
+LDFLAGS="-arch arm64 -arch x86_64 -F/Applications/Nova.app/Contents/Frameworks -framework SyntaxKit"
+# Nova will run on anything at or above this
+MACOSX_DEPLOYMENT_TARGET="15.0"
+
+[tasks.update]
+description = "Update submodule to latest."
+dir = "{{ config_root }}"
+run = '''
+git submodule update --recursive --remote
+'''
+
+[tasks.compile]
+description = "Compile the tree-sitter library."
+dir = "{{ config_root }}/tree-sitter-hcl"
+run = '''
+make clean
+make all
+mv ./libtree-sitter-hcl.dylib {{ config_root }}/HCL.novaextension/Syntaxes/libtree-sitter-hcl.dylib
+'''
+# Do an ad-hoc signature for distribution
+[tasks.sign]
+description = "Ad-hoc sign the tree-sitter library."
+dir = "{{ config_root }}"
+run = '''
+codesign --force --sign - {{ config_root }}/HCL.novaextension/Syntaxes/libtree-sitter-hcl.dylib
+'''
+
+[tasks.build]
+description = "Build and sign the tree-sitter library."
+run = [
+  { task = "compile "},
+  { task = "sign" }
+]

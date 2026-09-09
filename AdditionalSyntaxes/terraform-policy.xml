@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<syntax name="hcl">
+<syntax name="terraform-policy">
     <meta>
-        <name>HCL</name>
+        <name>terraform-policy</name>
         <type>structured</type>
-        <preferred-file-extension>hcl</preferred-file-extension>
+        <preferred-file-extension>policy.hcl</preferred-file-extension>
+        <parent>terraform</parent>
     </meta>
-    <detectors>
-        <extension priority="1.0">hcl</extension>
-    </detectors>
 
+    <detectors>
+        <extension priority="1.0">policy.hcl</extension>
+    </detectors>
     <indentation>
         <increase>
             <expression>(\{[^}\"]*$)|(\[[^\]\"]*$)|(\([^)\"]*$)</expression>
@@ -17,7 +18,6 @@
             <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
         </decrease>
     </indentation>
-
     <comments>
         <single>
             <expression>#</expression>
@@ -26,14 +26,13 @@
         <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->
         <multiline>
             <starts-with>
-                <expression>/*</expression>
+                <expression>\/\*</expression>
             </starts-with>
             <ends-with>
-                <expression>*/</expression>
+                <expression>\*\/</expression>
             </ends-with>
         </multiline>
     </comments>
-
     <brackets>
         <pair open="{" close="}" />
         <pair open="[" close="]" />
@@ -44,9 +43,9 @@
         <pair open="{" close="}" />
         <pair open="[" close="]" />
         <pair open="(" close=")" />
+        <pair open="&apos;" close="&apos;" />
         <pair open="&quot;" close="&quot;" />
     </surrounding-pairs>
-    
     <tree-sitter language="hcl">
         <highlights path="highlights.scm" />
         <symbols    path="symbols.scm" />

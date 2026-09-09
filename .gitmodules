@@ -1,0 +1,3 @@
+[submodule "tree-sitter-hcl"]
+	path = tree-sitter-hcl
+	url = https://github.com/tree-sitter-grammars/tree-sitter-hcl

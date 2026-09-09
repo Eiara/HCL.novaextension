@@ -1,14 +1,28 @@
 {
-    "identifier": "nz.eiara.HCL",
+    "identifier": "nz.eiara.hcl",
     "name": "HCL",
     "organization": "Eiara Limited",
-    "description": "Language support for Hashicorp's Terraform and Packer",
-    "version": "0.1.20",
-    "categories": ["languages","clips"],
-    "keywords": ["terraform", "packer"],
+    "description": "Language support for Hashicorp's Terraform, Packer, and HCL.",
+    "version": "0.2.0",
+    "min_runtime": "12.0",
+    "categories": [
+        "languages",
+        "clips",
+        "commands",
+        "formatters"
+    ],
+    "keywords": ["terraform", "packer", "hcl"],
     "activationEvents": [
         "onLanguage:terraform",
-        "onLanguage:packer"
+        "onLanguage:terraform-vars",
+        "onLanguage:terraform-deploy",
+        "onLanguage:terraform-policy",
+        "onLanguage:terraform-policytest",
+        "onLanguage:terraform-search",
+        "onLanguage:terraform-stack",
+        "onLanguage:packer",
+        "onLanguage:packer-vars",
+        "onLanguage:hcl"
       ],
     "license": "MIT",
     "bugs": {
@@ -21,27 +35,32 @@
         "filesystem": "readonly"
     },
     "main": "main.js",
-    "config": [
-        {
-            "key": "hcl.terraform-format-on-save",
-            "title": "Terraform Format On Save",
-            "description": "Format Terraform file on save",
-            "type": "boolean",
-            "default": false
-        },
-        {
-            "key": "hcl.terraform-binary",
-            "title": "Terraform Binary Path",
-            "description": "Terraform Binary Path.  Only set this if your Terraform binary is not available in your PATH.",
-            "type": "string",
-            "default": ""
-        }
-    ],
+    "configWorkspace": "config/workspace.json",
+    "config": "config/config.json",
     "commands": {
         "editor": [
             {
                 "title": "Terraform Format",
-                "command": "hcl.terraform-format",
+                "command": "nz.eiara.hcl.terraform.format",
+                "when": "editorHasFocus",
+                "filters": {
+                    "syntaxes": ["terraform"]
+                }
+            }
+        ],
+        "extensions": [
+            {
+                "title": "Restart Terraform Language Server",
+                "command": "nz.eiara.hcl.terraformls.restart",
+                "filters": {
+                    "syntaxes": ["terraform"]
+                }
+            }
+        ],
+        "command-palette": [
+            {
+                "title": "Terraform Format",
+                "command": "nz.eiara.hcl.terraform.format",
                 "when": "editorHasFocus",
                 "filters": {
                     "syntaxes": ["terraform"]
