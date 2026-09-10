@@ -1,14 +1,17 @@
 ## Unofficial HCL syntax extension for Panic Nova
 
-Based off of [the TextMate Terraform](https://github.com/aurynn/Terraform.tmbundle) bundle (to some extent).
+Language extension using the unofficial [HCL tree sitter grammar](https://github.com/tree-sitter-grammars/tree-sitter-hcl).
 
-Implements a generic HCL grammar, and uses it to power the [Terraform](https://terraform.io) and [Packer](https://packer.io)-specific grammars.
+Includes support for:
+ - terraform,
+ - packer,
+ - generic HCL.
 
-Includes support for `tfvars` and `pkrvars.hcl` files, using a subset grammar.
+Formatting for Terraform files is provided using the existing Terraform binary, and format-on-save can be enabled in extension or project preferences.
 
-Formatting for Terraform files is provided using your existing Terraform binary and format-on-save can be enabled, in extension preferences.
+## Language Server
 
-Eventually this will be moved to the offical Hashicorp language server.
+Provides initial integration with the [Hashicorp Terraform Language Server](https://github.com/hashicorp/terraform-ls), disabled by default. The language server can be enabled for testing in either extension or project settings.
 
 This extension is NOT maintained by Hashicorp.
 
