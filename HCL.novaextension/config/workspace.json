@@ -1,0 +1,96 @@
+[
+    {
+        "title": "Terraform language server",
+        "description": "Terraform language server settings.",
+        "type": "section",
+        "children": [
+            {
+                "key": "nz.eiara.hcl.terraformls.enabled",
+                "title": "Enable Terraform language server",
+                "type": "enum",
+                "allowsCustom": false,
+                "radio": false,
+                "values": [
+                    ["null", "Use global setting"],
+                    ["enabled", "Enabled"],
+                    ["disabled", "Disabled"]
+                ],
+                "default": "null"
+            },
+            {
+                "key": "nz.eiara.hcl.terraformls.enableEnhancedValidation",
+                "title": "Enable enhanced validation",
+                "description": "Enable enhanced validation performed by the Terraform language server.",
+                "link": "https://github.com/hashicorp/terraform-ls/blob/main/docs/validation.md#enhanced-validation",
+                "type": "boolean",
+                "default": true
+            },
+            {
+                "key": "nz.eiara.hcl.terraformls.timeout",
+                "title": "Language server timeout (seconds)",
+                "description": "How long to wait for a response from the Terraform language server.",
+                "type": "number",
+                "default": 30,
+                "min": 0
+            },
+            {
+                "key": "nz.eiara.hcl.terraformls.path",
+                "title": "Language Server Path",
+                "description": "Path to the Terraform language server. Default: homebrew path",
+                "type": "path",
+                "placeholder": "/opt/homebrew/bin/terraform-ls"
+            },
+            {
+                "key": "nz.eiara.hcl.terraformls.ignoredPaths",
+                "title": "Language server ignored paths",
+                "description": "File paths ignored by the Terraform language server.",
+                "type": "pathArray",
+                "filetypes": [
+                    "tf"
+                ]
+            },
+            {
+                "key": "nz.eiara.hcl.terraformls.ignoredDirectories",
+                "title": "Language server ignored directories",
+                "description": "Full directories ignored by the Terraform language server.",
+                "type": "pathArray",
+                "allowFiles": false,
+                "allowFolders": true
+            },
+            {
+                "key": "nz.eiara.hcl.terraformls.debug",
+                "title": "Enable terraform-ls debugging",
+                "type": "enum",
+                "allowsCustom": false,
+                "radio": false,
+                "values": [
+                    ["null", "Use global setting"],
+                    ["enabled", "Enabled"],
+                    ["disabled", "Disabled"]
+                ],
+                "default": "null"
+            }
+        ]
+    },
+    {
+        "key": "nz.eiara.hcl.terraform.path",
+        "title": "Terraform Binary Path",
+        "description": "Terraform Binary Path.  Only set this if your Terraform binary is not available in your PATH.",
+        "type": "string",
+        "placeholder": "/opt/homebrew/bin/terraform",
+        "default": null
+    },
+    {
+        "key": "nz.eiara.hcl.terraform.formatOnSave",
+        "title": "Format Terraform file on save",
+        "type": "enum",
+        "allowsCustom": false,
+        "radio": false,
+        "values": [
+            ["null", "Use global setting"],
+            ["enabled", "Enabled"],
+            ["disabled", "Disabled"]
+        ],
+        "default": "null"
+    }
+]

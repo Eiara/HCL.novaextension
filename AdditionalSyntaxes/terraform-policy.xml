@@ -1,12 +1,14 @@
-<syntax name="tfvars">
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="terraform-policy">
     <meta>
-        <name>tfvars</name>
+        <name>terraform-policy</name>
         <type>structured</type>
-        <preferred-file-extension>tfvars</preferred-file-extension>
+        <preferred-file-extension>policy.hcl</preferred-file-extension>
+        <parent>terraform</parent>
     </meta>
 
     <detectors>
-        <extension priority="1.0">tfvars</extension>
+        <extension priority="1.0">policy.hcl</extension>
     </detectors>
     <indentation>
         <increase>
@@ -18,10 +20,8 @@
     </indentation>
     <comments>
         <single>
-                <!--
-                    While Terraform does support // that's considered less than ideal
-                -->
             <expression>#</expression>
+            <expression>\/\/</expression>
         </single>
         <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->
         <multiline>
@@ -46,11 +46,10 @@
         <pair open="&apos;" close="&apos;" />
         <pair open="&quot;" close="&quot;" />
     </surrounding-pairs>
-    <scopes>
-        <include syntax="hcl" collection="comments" />
-        <include syntax="hcl" collection="objects" />
-        <include syntax="hcl" collection="assignments" />
-        <include syntax="hcl" collection="strings" />
-        <include syntax="hcl" collection="values" />
-    </scopes>
+    <tree-sitter language="hcl">
+        <highlights path="highlights.scm" />
+        <symbols    path="symbols.scm" />
+        <folds      path="folds.scm" />
+        <injections path="injections.scm" />
+    </tree-sitter>
 </syntax>

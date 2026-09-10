@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="packer">
+    <meta>
+        <name>Packer</name>
+        <type>structured</type>
+        <preferred-file-extension>pkr.hcl</preferred-file-extension>
+        <parent>hcl</parent>
+    </meta>
+
+    <detectors>
+        <extension priority="0.9">pkr.hcl</extension>
+    </detectors>
+
+<indentation>
+    <increase>
+        <expression>(\{[^}\"]*$)|(\[[^\]\"]*$)|(\([^)\"]*$)</expression>
+    </increase>
+    <decrease>
+        <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
+    </decrease>
+</indentation>
+
+    <comments>
+        <single>
+            <expression>#</expression>
+            <expression>\/\/</expression>
+        </single>
+        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->
+        <multiline>
+            <starts-with>
+                <expression>/*</expression>
+            </starts-with>
+            <ends-with>
+                <expression>*/</expression>
+            </ends-with>
+        </multiline>
+    </comments>
+
+    <brackets>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+    </brackets>
+
+    <surrounding-pairs>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+        <pair open="&quot;" close="&quot;" />
+    </surrounding-pairs>
+
+    <tree-sitter language="hcl">
+        <highlights path="highlights.scm" />
+        <symbols    path="symbols.scm" />
+        <folds      path="folds.scm" />
+        <injections path="injections.scm" />
+    </tree-sitter>
+</syntax>

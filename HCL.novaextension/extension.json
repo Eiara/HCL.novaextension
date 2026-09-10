@@ -1,0 +1,71 @@
+{
+    "identifier": "nz.eiara.hcl",
+    "name": "HCL",
+    "organization": "Eiara Limited",
+    "description": "Language support for Hashicorp's Terraform, Packer, and HCL.",
+    "version": "0.2.0",
+    "min_runtime": "12.0",
+    "categories": [
+        "languages",
+        "clips",
+        "commands",
+        "formatters"
+    ],
+    "keywords": ["terraform", "packer", "hcl"],
+    "activationEvents": [
+        "onLanguage:terraform",
+        "onLanguage:terraform-vars",
+        "onLanguage:terraform-deploy",
+        "onLanguage:terraform-policy",
+        "onLanguage:terraform-policytest",
+        "onLanguage:terraform-search",
+        "onLanguage:terraform-stack",
+        "onLanguage:packer",
+        "onLanguage:packer-vars",
+        "onLanguage:hcl"
+      ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Eiara/HCL.novaextension/issues"
+    },
+    "repository": "https://github.com/Eiara/HCL.novaextension",
+    "homepage": "https://github.com/Eiara/HCL.novaextension",
+    "entitlements": {
+        "process": true,
+        "filesystem": "readonly"
+    },
+    "main": "main.js",
+    "configWorkspace": "config/workspace.json",
+    "config": "config/config.json",
+    "commands": {
+        "editor": [
+            {
+                "title": "Terraform Format",
+                "command": "nz.eiara.hcl.terraform.format",
+                "when": "editorHasFocus",
+                "filters": {
+                    "syntaxes": ["terraform"]
+                }
+            }
+        ],
+        "extensions": [
+            {
+                "title": "Restart Terraform Language Server",
+                "command": "nz.eiara.hcl.terraformls.restart",
+                "filters": {
+                    "syntaxes": ["terraform"]
+                }
+            }
+        ],
+        "command-palette": [
+            {
+                "title": "Terraform Format",
+                "command": "nz.eiara.hcl.terraform.format",
+                "when": "editorHasFocus",
+                "filters": {
+                    "syntaxes": ["terraform"]
+                }
+            }
+        ]
+    }
+}

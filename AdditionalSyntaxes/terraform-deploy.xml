@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<syntax name="terraform-deploy">
+    <meta>
+        <name>terraform-deploy</name>
+        <type>structured</type>
+        <preferred-file-extension>tfdeploy.hcl</preferred-file-extension>
+        <parent>terraform</parent>
+    </meta>
+
+    <detectors>
+        <extension priority="1.0">tfdeploy.hcl</extension>
+    </detectors>
+    <indentation>
+        <increase>
+            <expression>(\{[^}\"]*$)|(\[[^\]\"]*$)|(\([^)\"]*$)</expression>
+        </increase>
+        <decrease>
+            <expression>^\s*(\s*/\*.*\*/\s*)*[\}\]\)\\]</expression>
+        </decrease>
+    </indentation>
+    <comments>
+        <single>
+            <expression>#</expression>
+            <expression>\/\/</expression>
+        </single>
+        <!-- per https://www.terraform.io/docs/configuration/syntax.html#comments  -->
+        <multiline>
+            <starts-with>
+                <expression>\/\*</expression>
+            </starts-with>
+            <ends-with>
+                <expression>\*\/</expression>
+            </ends-with>
+        </multiline>
+    </comments>
+    <brackets>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+    </brackets>
+
+    <surrounding-pairs>
+        <pair open="{" close="}" />
+        <pair open="[" close="]" />
+        <pair open="(" close=")" />
+        <pair open="&apos;" close="&apos;" />
+        <pair open="&quot;" close="&quot;" />
+    </surrounding-pairs>
+    <tree-sitter language="hcl">
+        <highlights path="highlights.scm" />
+        <symbols    path="symbols.scm" />
+        <folds      path="folds.scm" />
+        <injections path="injections.scm" />
+    </tree-sitter>
+</syntax>
