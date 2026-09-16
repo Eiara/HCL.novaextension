@@ -1,5 +1,5 @@
 {
-    "identifier": "nz.eiara.hcl",
+    "identifier": "nz.eiara.HCL",
     "name": "HCL",
     "organization": "Eiara Limited",
     "description": "Language support for Hashicorp's Terraform, Packer, and HCL.",
